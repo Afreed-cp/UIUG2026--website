@@ -1,0 +1,170 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { fetchChildren } from '../../lib/umbraco';
+import { mapProject } from '../../lib/umbracoMappers';
+import type { UmbracoProject } from '../../types/umbraco';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+// Get Projects page ID from block properties and fetch its children
+let projects: Array<{
+  id: string;
+  title: string;
+  client: string;
+  category: string;
+  imageUrl: string;
+  tech: string[];
+}> = [];
+
+if (props.projects) {
+  // props.projects should contain the ID of the Projects page
+  let projectsPageId: string | undefined;
+  if (typeof props.projects === 'string') {
+    projectsPageId = props.projects;
+  } else if (props.projects.id) {
+    projectsPageId = props.projects.id;
+  } else if (Array.isArray(props.projects) && props.projects.length > 0) {
+    projectsPageId = typeof props.projects[0] === 'string' ? props.projects[0] : props.projects[0].id;
+  } else {
+    console.warn('[ShowcaseBlock] Invalid projects property format:', props.projects);
+  }
+  
+  if (projectsPageId) {
+    try {
+      // Fetch children of the Projects page (which should be Project documents)
+      const children = await fetchChildren(projectsPageId, 'project');
+      projects = (children as UmbracoProject[])
+        .filter(item => item.contentType === 'project')
+        .map(mapProject);
+    } catch (error) {
+      console.error('[ShowcaseBlock] Error fetching projects:', error);
+    }
+  }
+}
+---
+
+<section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black" id="showcase">
+  {/* Header Bar */}
+  <div class="p-4 bg-terminal-gray/10 cell-border flex items-center justify-between">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+      <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">SHW</span>
+      {props.title || 'PROJECT_SHOWCASE_NODE'}
+    </h2>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-4 text-[9px] font-bold text-terminal-gray mr-4 border-r border-terminal-gray pr-4">
+        <span class="status-blink text-terminal-red">● SCANNING_PORTFOLIO</span>
+        <span>ENTRIES: {projects.length}</span>
+      </div>
+      <button 
+        id="view-full-repository-btn"
+        class="text-[10px] border border-terminal-white px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold"
+      >
+        [VIEW_FULL_REPOSITORY]
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3">
+    {projects.map((item) => (
+      <div class="cell-border group relative overflow-hidden flex flex-col cursor-crosshair">
+        {/* Image Container */}
+        <div class="aspect-video relative overflow-hidden bg-terminal-gray/20">
+          {item.imageUrl && (
+            <img 
+              src={item.imageUrl} 
+              alt={item.title} 
+              class="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 group-hover:scale-105"
+            />
+          )}
+          
+          {/* Data Overlay */}
+          <div class="absolute top-2 left-2 flex flex-col gap-1">
+            <span class="bg-terminal-black/80 text-[8px] px-1 font-bold border border-terminal-white/20">
+              REF::{item.id.slice(0, 8).toUpperCase()}
+            </span>
+            <span class="bg-terminal-red/80 text-[8px] px-1 font-bold text-white border border-terminal-red/20">
+              {item.category}
+            </span>
+          </div>
+
+          {/* Tactical Visuals */}
+          <div class="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="absolute top-0 left-0 w-full h-px bg-terminal-red/40 animate-[scan_2s_linear_infinite]"></div>
+            <div class="absolute inset-0 border-4 border-terminal-red/20 m-2"></div>
+          </div>
+        </div>
+
+        {/* Content Container */}
+        <div class="p-6 flex-1 flex flex-col bg-terminal-black group-hover:bg-terminal-white/5 transition-colors">
+          {item.client && (
+            <span class="text-[8px] text-terminal-gray font-bold mb-1">CLIENT:: {item.client}</span>
+          )}
+          <h3 class="text-xl font-black mb-4 tracking-tighter group-hover:text-terminal-red transition-colors italic uppercase">
+            {item.title}
+          </h3>
+          
+          <div class="mt-auto">
+            {item.tech && item.tech.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-6">
+                {item.tech.map((t) => (
+                  <span class="text-[8px] font-mono border border-terminal-gray px-1 text-terminal-gray group-hover:border-terminal-white group-hover:text-terminal-white transition-colors">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            <button class="w-full border border-terminal-white py-2 text-[10px] font-black hover:bg-terminal-white hover:text-terminal-black transition-all flex items-center justify-center gap-2">
+              [VIEW_DATA]
+              <span class="status-blink text-terminal-red">_</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Side Status Bar */}
+        <div class="absolute right-0 top-0 w-1 h-full bg-terminal-gray/30 group-hover:bg-terminal-red transition-colors"></div>
+      </div>
+    ))}
+  </div>
+
+  {/* Grid Filler / Bottom Bar */}
+  <div class="p-4 border-t border-terminal-gray flex justify-center bg-terminal-gray/5">
+    <button 
+      id="explore-repository-btn"
+      class="text-[10px] font-bold text-terminal-gray hover:text-terminal-white transition-colors tracking-[0.4em]"
+    >
+      EXPLORE_FULL_REPOSITORY_INDEX_>>>
+    </button>
+  </div>
+</section>
+
+<style>
+  @keyframes scan {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+  }
+</style>
+
+<script>
+  // View full repository button handlers
+  const viewFullBtn = document.getElementById('view-full-repository-btn');
+  const exploreBtn = document.getElementById('explore-repository-btn');
+  
+  const handleViewAll = () => {
+    // TODO: Open projects archive modal/page when implemented
+    console.log('View full repository clicked');
+  };
+  
+  if (viewFullBtn) {
+    viewFullBtn.addEventListener('click', handleViewAll);
+  }
+  
+  if (exploreBtn) {
+    exploreBtn.addEventListener('click', handleViewAll);
+  }
+</script>

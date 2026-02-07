@@ -1,0 +1,169 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+interface SocialPort {
+  id: string;
+  name: string;
+  label: string;
+  description: string;
+  meta: string;
+  latency: string;
+  link: string;
+  order: number;
+}
+
+let socialPorts: SocialPort[] = [];
+
+if (props.socialLinks) {
+  try {
+    const socialLinksData = props.socialLinks;
+    let items: any[] = [];
+    
+    // Handle Block List structure: { items: [...] }
+    if (socialLinksData.items && Array.isArray(socialLinksData.items)) {
+      items = socialLinksData.items;
+    } else if (Array.isArray(socialLinksData)) {
+      items = socialLinksData;
+    }
+    
+    // Process each social link - structure: { content: { contentType, id, properties }, settings }
+    socialPorts = items.map((item: any) => {
+      const content = item.content || item;
+      const itemProps = content.properties || {};
+      
+      return {
+        id: content.id || item.id || '',
+        name: itemProps.name || itemProps.platformName || content.name || '',
+        label: itemProps.label || '',
+        description: itemProps.description || '',
+        meta: itemProps.meta || '',
+        latency: itemProps.latency || '',
+        link: itemProps.url || itemProps.link || '',
+        order: itemProps.order || 0,
+      };
+    });
+    
+    // Sort by order if available
+    socialPorts.sort((a, b) => a.order - b.order);
+  } catch (error) {
+    console.error('[SocialsBlock] Error processing social links:', error);
+  }
+}
+---
+
+{props.title && socialPorts.length > 0 && (
+  <section class="mt-4 border-l border-r border-black bg-white text-black overflow-hidden" id="socials">
+    {/* Header Bar - Dark Theme for high contrast label */}
+    <div class="p-4 bg-black text-white cell-border flex items-center justify-between border-b border-black">
+      <h2 class="text-xl font-bold flex items-center gap-2">
+        <span class="w-5 h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[10px]">EXT</span>
+        {props.title || 'CLUSTER_EXTENSION_HUBS_V.2'}
+      </h2>
+      <div class="flex items-center gap-4 text-[9px] font-bold text-gray-400">
+        <span class="status-blink text-terminal-red">● MULTI_CHANNEL_UPLINK</span>
+        <span class="hidden sm:inline">OS: TERMINAL_COMMS_v4</span>
+      </div>
+    </div>
+
+    {/* Grid Content */}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-black">
+      {socialPorts.map((port) => (
+        <a 
+          href={port.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative flex flex-col p-8 border-r border-black last:border-r-0 transition-all duration-150 hover:bg-black/[0.03] cursor-pointer overflow-hidden"
+        >
+          {/* Background Grain Texture */}
+          <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pinstripe.png')]"></div>
+
+          {/* Tactical HUD Framing (Corners) */}
+          <div class="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-black/10 group-hover:border-terminal-red group-hover:w-6 group-hover:h-6 transition-all"></div>
+          <div class="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-black/10 group-hover:border-terminal-red group-hover:w-6 group-hover:h-6 transition-all"></div>
+          <div class="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-black/10 group-hover:border-terminal-red group-hover:w-6 group-hover:h-6 transition-all"></div>
+          <div class="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-black/10 group-hover:border-terminal-red group-hover:w-6 group-hover:h-6 transition-all"></div>
+
+          {/* Top Command Bar (Action Zone) */}
+          <div class="relative h-10 mb-6 flex items-center overflow-hidden border-b border-black/5 group-hover:border-terminal-red/20 transition-colors">
+            {/* Idle State: Port ID */}
+            <div class="flex justify-between w-full transition-transform duration-300 group-hover:-translate-y-full">
+              <span class="text-[10px] font-black text-gray-400">
+                PORT_{String(port.order || 0).padStart(2, '0')}
+              </span>
+              <div class="flex gap-1">
+                {[...Array(3)].map((_, i) => (
+                  <div class={`w-1 h-3 ${i === 0 ? 'bg-terminal-red' : 'bg-black/10'}`}></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Hover State: Uplink Action Bar */}
+            <div class="absolute inset-0 bg-terminal-red text-white flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-300 shadow-[0_0_15px_rgba(255,0,0,0.2)]">
+              <span class="text-[10px] font-black italic tracking-widest px-4">
+                [ EXECUTE_UPLINK_>>> ]
+              </span>
+            </div>
+          </div>
+
+          {/* Content Body */}
+          <div class="relative z-10 py-4">
+            {port.label && (
+              <span class="block text-[8px] font-bold text-terminal-red mb-1 uppercase tracking-[0.2em]">{port.label}</span>
+            )}
+            <h3 class="text-4xl font-black italic tracking-tighter uppercase mb-4 text-black">
+              {port.name}<span class="text-terminal-red group-hover:status-blink">_</span>
+            </h3>
+            {port.description && (
+              <p class="text-[10px] font-mono leading-relaxed lowercase italic text-gray-500 group-hover:text-black transition-colors h-12 overflow-hidden">
+                {port.description}
+              </p>
+            )}
+          </div>
+
+          {/* Tactical Footer */}
+          <div class="mt-auto pt-6 border-t border-black/10 flex justify-between items-center group-hover:border-terminal-red/30 transition-colors">
+            <div class="flex flex-col">
+              <span class="text-[7px] font-bold text-gray-400 uppercase">Latency</span>
+              <span class="text-[9px] font-black text-black group-hover:text-terminal-red transition-colors">{port.latency || 'N/A'}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[7px] font-bold text-gray-400 uppercase">Channel</span>
+              <span class="block text-[8px] font-black text-black">SECURE_01</span>
+            </div>
+          </div>
+
+          {/* Visual Flair: Bottom Progress Bar */}
+          <div class="absolute bottom-0 left-0 w-full h-1 bg-black/5">
+            <div class="h-full bg-terminal-red w-0 group-hover:w-full transition-all duration-700 ease-out"></div>
+          </div>
+
+          {/* Scanline Overlay (Subtle) */}
+          <div class="absolute inset-0 pointer-events-none opacity-[0.01] group-hover:opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_3px)] transition-opacity"></div>
+        </a>
+      ))}
+    </div>
+
+    {/* Footer Meta Strip */}
+    <div class="p-3 bg-gray-50 flex justify-between items-center text-[8px] font-bold text-gray-400 tracking-[0.4em] border-t border-black">
+      <div class="flex gap-4 items-center">
+        <span class="text-terminal-red">NETWORK_GRID: ESTABLISHED</span>
+        <span class="opacity-30">|</span>
+        <span>GLOBAL_PEERING: ON</span>
+      </div>
+      <div class="flex gap-2">
+        {[...Array(20)].map((_, i) => (
+          <div class={`w-0.5 h-1.5 bg-black/10 ${i % 5 === 0 ? 'bg-terminal-red/40' : ''}`}></div>
+        ))}
+      </div>
+      <span class="hidden sm:inline text-gray-300">COMMS_ARRAY_v2.10</span>
+    </div>
+  </section>
+)}
+

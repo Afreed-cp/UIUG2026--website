@@ -1,0 +1,61 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { fetchContentById, fetchChildren } from '../../lib/umbraco';
+import { mapSpeaker } from '../../lib/umbracoMappers';
+import type { UmbracoSpeaker } from '../../types/umbraco';
+import type { Speaker } from '../../types';
+import SpeakersCarousel from './SpeakersCarousel';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+// Get Speakers page ID from block properties and fetch its children
+let speakers: Speaker[] = [];
+if (props.speakers) {
+  // props.speakers should contain the ID of the Speakers page
+  // It might be a Content Picker object with an id property, or just a string ID
+  let speakersPageId: string | undefined;
+  if (typeof props.speakers === 'string') {
+    speakersPageId = props.speakers;
+  } else if (props.speakers.id) {
+    speakersPageId = props.speakers.id;
+  } else if (Array.isArray(props.speakers) && props.speakers.length > 0) {
+    // If it's an array (Content Picker can return arrays), take the first item
+    speakersPageId = typeof props.speakers[0] === 'string' ? props.speakers[0] : props.speakers[0].id;
+  } else {
+    console.warn('[SpeakersBlock] Invalid speakers property format:', props.speakers);
+  }
+  
+  if (speakersPageId) {
+    try {
+      // Fetch children of the Speakers page (which should be Speaker documents)
+      // Pass 'speaker' as content type for efficiency
+      const children = await fetchChildren(speakersPageId, 'speaker');
+      speakers = (children as UmbracoSpeaker[])
+        .filter(item => item.contentType === 'speaker')
+        .map(mapSpeaker);
+    } catch (error) {
+      console.error('[SpeakersBlock] Error fetching speakers:', error);
+    }
+  }
+}
+---
+
+<section class="mt-4 border-l border-r border-terminal-gray overflow-hidden group/section" id="speakers">
+  {speakers.length > 0 && (
+    <SpeakersCarousel 
+      client:load 
+      speakers={speakers}
+      title={props.title}
+      onViewAll={() => {
+        // TODO: Open speakers archive modal/page when implemented
+        console.log('View all contributors clicked');
+      }}
+    />
+  )}
+</section>
+

@@ -1,0 +1,71 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { getBlocksInOrder } from '../../lib/blockRenderer';
+import { fetchContentById } from '../../lib/umbraco';
+import FAQAccordion from './FAQAccordion';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+console.log('[FAQBlock] props:', props);
+// FAQ items come from props.faqItems which is a Block List
+interface FAQItem {
+  id: string;
+  query: string;
+  response: string;
+  order: number;
+}
+
+let faqs: FAQItem[] = [];
+
+if (props.faqItems) {
+  // faqItems is a Block List structure with items array
+  try {
+    const faqItemsData = props.faqItems;
+    let items: any[] = [];
+    
+    // Handle Block List structure: { items: [...] }
+    if (faqItemsData.items && Array.isArray(faqItemsData.items)) {
+      items = faqItemsData.items;
+    } else if (Array.isArray(faqItemsData)) {
+      items = faqItemsData;
+    }
+    
+    // Process each FAQ item - structure: { content: { contentType, id, properties }, settings }
+    faqs = items.map((item: any) => {
+      const content = item.content || item;
+      const itemProps = content.properties || {};
+      
+      return {
+        id: content.id || item.id || '',
+        query: itemProps.query || content.name || '',
+        response: itemProps.response || '',
+        order: itemProps.order || 0,
+      };
+    });
+    
+    // Sort by order if available
+    faqs.sort((a, b) => a.order - b.order);
+  } catch (error) {
+    console.error('[FAQBlock] Error processing FAQ items:', error);
+  }
+}
+---
+
+<section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black overflow-hidden" id="faq">
+  <FAQAccordion 
+    client:load
+    title={props.title}
+    queryCount={faqs.length}
+    faqs={faqs}
+  />
+</section>
+
+<script define:vars={{ props, faqs }}>
+  console.log('[FAQBlock - Browser] props:', props);
+  console.log('[FAQBlock - Browser] faqs:', faqs);
+</script>

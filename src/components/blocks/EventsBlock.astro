@@ -1,0 +1,108 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import {fetchContentById } from '../../lib/umbraco';
+import { mapEvent } from '../../lib/umbracoMappers';
+import type { UmbracoEvent } from '../../types/umbraco';
+import type { Event } from '../../types';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+// Events should always be provided via props.threads from the Block List configuration
+let events: Event[] = [];
+if (props.threads && Array.isArray(props.threads)) {
+  // Events are provided in the block properties, but properties might be empty
+  // Fetch full content for each event by ID to get their properties
+  try {
+    const eventPromises = (props.threads as any[]).map(async (item) => {
+      // If properties are empty, fetch the full content by ID
+      if (!item.properties || Object.keys(item.properties).length === 0) {
+        try {
+          const fullEvent = await fetchContentById(item.id);
+          if (fullEvent) {
+            return mapEvent(fullEvent as UmbracoEvent);
+          }
+        } catch (err) {
+          console.warn(`[EventsBlock] Could not fetch event ${item.id}:`, err);
+        }
+      }
+      
+      // Use existing properties if available
+      const eventProps = item.properties || {};
+      return {
+        id: item.id || '',
+        title: eventProps.title || item.name || '',
+        category: eventProps.category || '',
+        user: eventProps.user || '',
+        status: eventProps.status || 'STABLE',
+        timestamp: eventProps.timestamp || '',
+      };
+    });
+    
+    events = await Promise.all(eventPromises);
+  } catch (error) {
+    console.error('[ThreadsBlock] Error processing events from props:', error);
+  }
+}
+---
+
+<section class="mt-4 grid-layout border-l border-r border-terminal-gray" id="console">
+  {/* Header Section */}
+  <div class="col-span-12 p-4 bg-terminal-gray/10 cell-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+      <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">CMD</span>
+      {props.title }
+    </h2>
+    <button 
+      id="view-all-talks-btn"
+      class="text-[10px] border border-terminal-white px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold"
+    >
+      [VIEW_ALL_TALKS]
+    </button>
+  </div>
+  
+  {/* Events List */}
+  {events.map((event, idx) => (
+    <>
+      <div class="col-span-1 lg:col-span-1 p-4 cell-border text-terminal-red font-bold flex items-center justify-center">
+        {String(idx + 1).padStart(3, '0')}
+      </div>
+      <div class="col-span-8 lg:col-span-8 p-4 cell-border">
+        <div class="flex items-center gap-4 mb-2">
+          <span class="bg-terminal-white text-terminal-black px-1 font-bold">{event.category}</span>
+          <span class="text-terminal-gray hidden sm:inline">{event.timestamp}</span>
+        </div>
+        <a class="text-lg sm:text-xl font-bold hover:bg-terminal-white hover:text-terminal-black block transition-colors" href="#">
+          {event.title}
+        </a>
+        <div class="mt-4 flex gap-6 text-[10px]">
+          <span class="hover:text-terminal-red cursor-pointer">[REPLY]</span>
+          <span class="hover:text-terminal-red cursor-pointer">[SHARE]</span>
+          <span class="hover:text-terminal-red cursor-pointer">[FORK]</span>
+        </div>
+      </div>
+      <div class="col-span-3 lg:col-span-3 p-4 cell-border text-right flex flex-col justify-center">
+        <span class="block truncate">USER: {event.user}</span>
+        <span class={event.status === 'UNSTABLE' ? 'text-terminal-red' : 'text-terminal-white opacity-60'}>
+          {event.status}
+        </span>
+      </div>
+    </>
+  ))}
+</section>
+
+<script>
+  // View all talks button handler
+  const viewAllBtn = document.getElementById('view-all-talks-btn');
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', () => {
+      // TODO: Open talks archive modal/page when implemented
+      console.log('View all talks clicked');
+    });
+  }
+</script>
+

@@ -1,0 +1,25 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import NewsletterForm from './NewsletterForm';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+---
+
+{props.title && (
+  <NewsletterForm 
+    client:load
+    title={props.title}
+    headline={props.headline}
+    description={props.description}
+    buttonText={props.buttonText}
+    placeholderText={props.placeholderText}
+    successMessage={props.successMessage}
+    encryptionText={props.encryptionText}
+  />
+)}
+

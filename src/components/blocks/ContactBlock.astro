@@ -1,0 +1,39 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import ContactForm from './ContactForm';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+---
+
+<section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black overflow-hidden" id="contact">
+  <ContactForm 
+    client:load
+    title={props.title}
+    subtitle={props.subtitle}
+    nodeHandleLabel={props.nodeHandleLabel}
+    nodeHandlePlaceholder={props.nodeHandlePlaceholder}
+    returnEndpointLabel={props.returnEndpointLabel}
+    returnEndpointPlaceholder={props.returnEndpointPlaceholder}
+    dataPayloadLabel={props.dataPayloadLabel}
+    dataPayloadPlaceholder={props.dataPayloadPlaceholder}
+    broadcastButtonText={props.broadcastButtonText}
+    transmittingText={props.transmittingText}
+    successTitle={props.successTitle}
+    successSubtitle={props.successSubtitle}
+    mapTitle={props.mapTitle}
+    mapLatitude={props.mapLatitude}
+    mapLongitude={props.mapLongitude}
+    mapZoom={props.mapZoom}
+    nodeName={props.nodeName}
+    nodeCoordinates={props.nodeCoordinates}
+    clusterRegion={props.clusterRegion}
+    activeNodes={props.activeNodes}
+    primaryNode={props.primaryNode}
+    noteText={props.noteText}
+  />
+</section>

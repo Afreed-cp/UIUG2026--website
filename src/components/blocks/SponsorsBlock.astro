@@ -1,0 +1,179 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { getImageUrl, getUmbracoBaseUrl } from '../../lib/content';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+interface Sponsor {
+  id: string;
+  name: string;
+  tier: 'PLATINUM' | 'GOLD' | 'SILVER';
+  logo: string;
+  contribution: string;
+  order: number;
+}
+
+let sponsors: Sponsor[] = [];
+
+if (props.sponsors) {
+  try {
+    const sponsorsData = props.sponsors;
+    let items: any[] = [];
+    
+    // Handle Block List structure: { items: [...] }
+    if (sponsorsData.items && Array.isArray(sponsorsData.items)) {
+      items = sponsorsData.items;
+    } else if (Array.isArray(sponsorsData)) {
+      items = sponsorsData;
+    }
+    
+    // Helper to get full media URL
+    function getFullMediaUrl(relativePath?: string): string {
+      if (!relativePath) return '';
+      if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+        return relativePath; // Already an absolute URL
+      }
+      const baseUrl = getUmbracoBaseUrl();
+      const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+      const normalizedRelativePath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+      return `${normalizedBaseUrl}${normalizedRelativePath}`;
+    }
+    
+    // Process each sponsor - structure: { content: { contentType, id, properties }, settings }
+    sponsors = items.map((item: any) => {
+      const content = item.content || item;
+      const itemProps = content.properties || {};
+      
+      // Extract logo URL from media picker
+      const logo = itemProps.logo || itemProps.logoUrl;
+      let logoUrl = '';
+      
+      if (typeof logo === 'string') {
+        logoUrl = getFullMediaUrl(logo);
+      } else if (logo?.url) {
+        logoUrl = getFullMediaUrl(logo.url);
+      } else if (Array.isArray(logo) && logo.length > 0) {
+        const firstLogo = logo[0];
+        if (typeof firstLogo === 'string') {
+          logoUrl = getFullMediaUrl(firstLogo);
+        } else if (firstLogo?.url) {
+          logoUrl = getFullMediaUrl(firstLogo.url);
+        } else if (firstLogo?.content?.url) {
+          logoUrl = getFullMediaUrl(firstLogo.content.url);
+        }
+      }
+      
+      return {
+        id: content.id || item.id || '',
+        name: itemProps.name || itemProps.sponsorName || content.name || '',
+        tier: (itemProps.tier || 'SILVER') as 'PLATINUM' | 'GOLD' | 'SILVER',
+        logo: logoUrl,
+        contribution: itemProps.contribution || '',
+        order: itemProps.order || 0,
+      };
+    });
+    
+    // Sort by order if available
+    sponsors.sort((a, b) => a.order - b.order);
+  } catch (error) {
+    console.error('[SponsorsBlock] Error processing sponsors:', error);
+  }
+}
+---
+
+{props.title && sponsors.length > 0 && (
+  <section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black overflow-hidden" id="sponsors">
+    {/* Header Bar */}
+    <div class="p-4 bg-terminal-gray/10 cell-border flex items-center justify-between">
+      <h2 class="text-xl font-bold flex items-center gap-2">
+        <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">PTR</span>
+        {props.title || 'TRUSTED_PARTNERS_PROTO'}
+      </h2>
+      <span class="text-[10px] font-bold text-terminal-gray">U_S_P: ACTIVE_SESSION</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      {sponsors.map((sponsor) => (
+        <div class="p-8 cell-border group hover:bg-terminal-white/5 transition-all cursor-pointer relative overflow-hidden">
+          {/* Background text decoration */}
+          <div class="absolute -bottom-2 -right-2 text-[40px] font-black text-terminal-gray/5 pointer-events-none select-none italic">
+            {sponsor.tier}
+          </div>
+
+          <div class="mb-6 h-20 w-full border border-terminal-gray p-2 grayscale group-hover:grayscale-0 transition-all group-hover:border-terminal-red">
+            {sponsor.logo ? (
+              <img 
+                src={sponsor.logo} 
+                alt={sponsor.name} 
+                class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
+              />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center text-terminal-gray text-xs">
+                {sponsor.name}
+              </div>
+            )}
+          </div>
+
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-black text-lg group-hover:text-terminal-red transition-colors">{sponsor.name}</h3>
+            <span class={`text-[8px] px-1 font-bold ${
+              sponsor.tier === 'PLATINUM' ? 'bg-terminal-white text-terminal-black' :
+              sponsor.tier === 'GOLD' ? 'text-terminal-red border border-terminal-red' :
+              'text-terminal-gray border border-terminal-gray'
+            }`}>
+              {sponsor.tier}
+            </span>
+          </div>
+
+          {sponsor.contribution && (
+            <div class="mt-4 pt-4 border-t border-terminal-gray/30 space-y-1">
+              <span class="block text-[8px] text-terminal-gray font-bold">CONTRIBUTION_DESC</span>
+              <p class="text-[10px] font-mono lowercase tracking-normal">
+                {sponsor.contribution}
+              </p>
+            </div>
+          )}
+
+          {/* Hover visual flair */}
+          <div class="absolute top-0 right-0 w-1 h-0 bg-terminal-red group-hover:h-full transition-all duration-300"></div>
+        </div>
+      ))}
+    </div>
+
+    {/* Footer / CTA to Sponsor */}
+    <div class="p-6 border-t border-terminal-gray flex flex-col md:flex-row items-center justify-between gap-4 bg-terminal-gray/5">
+      <div class="flex items-center gap-4">
+        <span class="text-terminal-red text-xl status-blink">⚡</span>
+        {props.ctaText && (
+          <p class="text-[10px] font-bold tracking-widest text-terminal-gray">
+            {props.ctaText}
+          </p>
+        )}
+      </div>
+      {props.ctaButtonText && (
+        <button 
+          id="become-sponsor-button"
+          class="btn-brutal text-[10px] px-8 py-2"
+        >
+          {props.ctaButtonText}
+        </button>
+      )}
+    </div>
+  </section>
+)}
+
+<script>
+  const becomeSponsorBtn = document.getElementById('become-sponsor-button');
+  if (becomeSponsorBtn) {
+    becomeSponsorBtn.addEventListener('click', () => {
+      // TODO: Implement sponsor inquiry functionality or link to contact/governance
+      console.log('Become a sponsor clicked');
+    });
+  }
+</script>
+

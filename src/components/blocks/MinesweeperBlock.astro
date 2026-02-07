@@ -1,0 +1,26 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import MinesweeperGame from './MinesweeperGame';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+---
+
+<section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black overflow-hidden select-none" id="pulse">
+  <MinesweeperGame 
+    client:load
+    title={props.title}
+    gameTitle={props.gameTitle}
+    gameDescription={props.gameDescription}
+    missionObjective={props.missionObjective}
+    rebootButtonText={props.rebootButtonText}
+    gridRows={props.gridRows}
+    gridCols={props.gridColumns}
+    mineCount={props.mineCount}
+  />
+</section>
+

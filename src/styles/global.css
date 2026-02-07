@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  --color-terminal-black: #000000;
+  --color-terminal-white: #FFFFFF;
+  --color-terminal-red: #FF0000;
+  --color-terminal-gray: #333333;
+  
+  --font-family-mono: "JetBrains Mono", monospace;
+}
+
+/* Import JetBrains Mono font */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap');
+
+/* Base styles - matching original React design */
+@layer base {
+  body {
+    @apply bg-terminal-black text-terminal-white font-mono uppercase tracking-tighter text-xs;
+  }
+}
+
+/* Custom animations */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1000%); }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+/* Custom utilities */
+.status-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.cell-border {
+  border: 0.5px solid #333;
+}
+
+.btn-brutal {
+  border: 1px solid var(--color-terminal-white);
+  padding: 0.5rem 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-brutal:hover {
+  background: var(--color-terminal-white);
+  color: var(--color-terminal-black);
+}
+
+.btn-alert {
+  border: 1px solid var(--color-terminal-red);
+  color: var(--color-terminal-red);
+  padding: 0.5rem 1rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-alert:hover {
+  background: var(--color-terminal-red);
+  color: var(--color-terminal-white);
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #FF0000;
+}
+
+/* Selection styling */
+::selection {
+  background: #FF0000;
+  color: white;
+}
+
+/* Leaflet map skeleton styling */
+.leaflet-container {
+  background: #000 !important;
+  outline: none;
+}
+.skeleton-map .leaflet-tile-pane {
+  filter: grayscale(100%) invert(100%) contrast(150%) brightness(0.8);
+  opacity: 0.4;
+}
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Pulse marker for map markers */
+.pulse-marker {
+  background: #FF0000;
+  border-radius: 50%;
+  box-shadow: 0 0 0 rgba(255, 0, 0, 0.4);
+  animation: pulse 2s infinite;
+}
+

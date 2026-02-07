@@ -1,0 +1,86 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { getImageUrl, getUmbracoBaseUrl } from '../../lib/content';
+import AssetGallery from './AssetGallery';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+
+interface GalleryAsset {
+  id: string;
+  imageUrl: string;
+}
+
+let assets: GalleryAsset[] = [];
+
+// Helper to get full media URL
+function getFullMediaUrl(relativePath?: string): string {
+  if (!relativePath) return '';
+  if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+    return relativePath; // Already an absolute URL
+  }
+  const baseUrl = getUmbracoBaseUrl();
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  const normalizedRelativePath = relativePath.startsWith('/') ? relativePath.substring(1) : relativePath;
+  return `${normalizedBaseUrl}${normalizedRelativePath}`;
+}
+
+// Parse multi media picker - can be array of media items
+if (props.assets) {
+  try {
+    let mediaItems: any[] = [];
+    
+    // Handle different media picker structures
+    if (Array.isArray(props.assets)) {
+      mediaItems = props.assets;
+    } else if (props.assets.items && Array.isArray(props.assets.items)) {
+      mediaItems = props.assets.items;
+    }
+    
+    // Process each media item
+    assets = mediaItems.map((item: any, index: number) => {
+      // Extract image URL from various possible structures
+      let imageUrl = '';
+      
+      // Try different property paths
+      if (typeof item === 'string') {
+        imageUrl = getFullMediaUrl(item);
+      } else if (item.url) {
+        imageUrl = getFullMediaUrl(item.url);
+      } else if (item.src) {
+        imageUrl = getFullMediaUrl(item.src);
+      } else if (item.content?.url) {
+        imageUrl = getFullMediaUrl(item.content.url);
+      } else if (item.mediaItems && Array.isArray(item.mediaItems) && item.mediaItems[0]?.url) {
+        imageUrl = getFullMediaUrl(item.mediaItems[0].url);
+      } else {
+        // Fallback: try getImageUrl helper
+        const extractedUrl = getImageUrl(item);
+        imageUrl = extractedUrl ? getFullMediaUrl(extractedUrl) : '';
+      }
+      
+      return {
+        id: item.id || `AST-${String(index + 1).padStart(3, '0')}`,
+        imageUrl: imageUrl || '',
+      };
+    }).filter(asset => asset.imageUrl); // Filter out assets without valid URLs
+    
+    console.log('[AssetGalleryBlock] Parsed assets:', assets.length);
+  } catch (error) {
+    console.error('[AssetGalleryBlock] Error processing assets:', error);
+  }
+}
+---
+
+{props.title && assets.length > 0 && (
+  <AssetGallery 
+    client:load
+    title={props.title}
+    assets={assets}
+  />
+)}
+

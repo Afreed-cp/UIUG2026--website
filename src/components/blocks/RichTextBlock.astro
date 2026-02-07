@@ -1,0 +1,19 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import { renderRichText } from '../../lib/content';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+const content = props.content;
+---
+
+{content && (
+  <section class="p-8 prose prose-invert max-w-none">
+    <Fragment set:html={renderRichText(content)} />
+  </section>
+)}
+

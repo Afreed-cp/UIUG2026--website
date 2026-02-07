@@ -1,0 +1,106 @@
+---
+import type { BlockListData } from '../../lib/blockRenderer';
+import { getBlocksInOrder, getBlockTypeAlias } from '../../lib/blockRenderer';
+import HeroBlock from './HeroBlock.astro';
+import EventsBlock from './EventsBlock.astro';
+import SpeakersBlock from './SpeakersBlock.astro';
+import ShowcaseBlock from './ShowcaseBlock.astro';
+import FAQBlock from './FAQBlock.astro';
+import NewsletterBlock from './NewsletterBlock.astro';
+import SocialsBlock from './SocialsBlock.astro';
+import SponsorsBlock from './SponsorsBlock.astro';
+import AssetGalleryBlock from './AssetGalleryBlock.astro';
+import ContactBlock from './ContactBlock.astro';
+import JoinCTABlock from './JoinCTABlock.astro';
+import MinesweeperBlock from './MinesweeperBlock.astro';
+import AppreciationMatrixBlock from './AppreciationMatrixBlock.astro';
+import RichTextBlock from './RichTextBlock.astro';
+
+interface Props {
+  blockListData: BlockListData | null | undefined;
+}
+
+const { blockListData } = Astro.props;
+
+// Debug logging
+console.log('[BlockList] blockListData:', blockListData ? blockListData : 'Not found');
+if (blockListData) {
+  console.log('[BlockList] Structure:', {
+    hasItems: !!blockListData.items,
+    itemsLength: blockListData.items?.length || 0,
+  });
+  if (blockListData.items) {
+    console.log('[BlockList] Block types:', blockListData.items.map(item => item.content?.contentType));
+  }
+}
+
+if (!blockListData || !blockListData.items || blockListData.items.length === 0) {
+  return null;
+}
+
+const blocks = getBlocksInOrder(blockListData);
+console.log('[BlockList] Parsed blocks:', blocks.length);
+blocks.forEach((block, index) => {
+  console.log(`[BlockList] Block ${index}:`, {
+    id: block.id,
+    contentType: block.contentType,
+    typeAlias: getBlockTypeAlias(block),
+  });
+});
+---
+
+{blocks.map((block) => {
+  const blockType = getBlockTypeAlias(block);
+  
+  switch (blockType) {
+    case 'heroBlock':
+      return <HeroBlock block={block} />;
+    case 'eventsBlock':
+      return <EventsBlock block={block} />;
+    case 'speakersBlock':
+      return <SpeakersBlock block={block} />;
+    case 'showcaseBlock':
+      return <ShowcaseBlock block={block} />;
+    case 'faqBlock':
+      return <FAQBlock block={block} />;
+    case 'newsletterBlock':
+      return <NewsletterBlock block={block} />;
+    case 'socialsBlock':
+      return <SocialsBlock block={block} />;
+    case 'sponsorsBlock':
+      return <SponsorsBlock block={block} />;
+    case 'assetGalleryBlock':
+      return <AssetGalleryBlock block={block} />;
+    case 'contactBlock':
+      return <ContactBlock block={block} />;
+    case 'joinCTABlock':
+      return <JoinCTABlock block={block} />;
+
+    case 'minesweeperBlock':
+      return <MinesweeperBlock block={block} />;
+    case 'appreciationMatrixBlock':
+      return <AppreciationMatrixBlock block={block} />;
+    case 'richTextBlock':
+      return <RichTextBlock block={block} />;
+    default:
+      console.warn(`Unknown block type: ${blockType}`);
+      return (
+        <div class="p-4 border border-terminal-red">
+          <p class="text-terminal-red">Unknown block type: {blockType}</p>
+          <pre class="text-xs mt-2">{JSON.stringify(block.properties, null, 2)}</pre>
+        </div>
+      );
+  }
+})}
+
+<script define:vars={{ blockListData, blocks }}>
+  // Browser console logging
+  console.log('[BlockList - Browser] blockListData:', blockListData);
+  console.log('[BlockList - Browser] blocks:', blocks);
+  if (blockListData) {
+    console.log('[BlockList - Browser] Structure:', {
+      hasItems: !!blockListData.items,
+      itemsLength: blockListData.items?.length || 0,
+    });
+  }
+</script>

@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { fetchHomepage } from '../lib/umbraco';
+import BlockList from '../components/blocks/BlockList.astro';
+
+// Fetch homepage content from Umbraco
+let homepage = null;
+try {
+  homepage = await fetchHomepage();
+} catch (error) {
+  console.error('[Homepage] Error fetching homepage:', error);
+}
+
+const meta = {
+  title: homepage?.properties?.seoTitle || homepage?.name,
+  description: homepage?.properties?.seoDescription,
+  keywords: homepage?.properties?.metaKeywords,
+  url: '/',
+  image: homepage?.properties?.ogImage?.url,
+};
+---
+
+        <BaseLayout {...meta}>
+          <main class="pt-12 px-4 pb-24 flex-1">
+    {homepage?.properties?.blocks ? (
+      <BlockList blockListData={homepage.properties.blocks} />
+    ) : (
+      homepage?.name && (
+        <div class="container mx-auto px-4 py-8">
+          <h1 class="text-4xl font-black mb-4">
+            {homepage.name}
+          </h1>
+        </div>
+      )
+    )}
+  </main>
+</BaseLayout>

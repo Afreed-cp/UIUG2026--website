@@ -1,0 +1,108 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+---
+
+{props.headline && (
+  <section class="mt-4 border-2 border-terminal-red p-12 text-center bg-terminal-red/5 relative overflow-hidden group">
+    {/* Tactical Corner Brackets */}
+    <div class="absolute top-2 left-2 w-8 h-8 border-t-2 border-l-2 border-terminal-red"></div>
+    <div class="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-terminal-red"></div>
+    <div class="absolute bottom-2 left-2 w-8 h-8 border-b-2 border-l-2 border-terminal-red"></div>
+    <div class="absolute bottom-2 right-2 w-8 h-8 border-b-2 border-r-2 border-terminal-red"></div>
+
+    {/* Scanning Line Animation */}
+    <div class="absolute inset-0 pointer-events-none z-0">
+      <div class="w-full h-px bg-terminal-red/20 absolute top-0 animate-[scan_4s_linear_infinite]"></div>
+    </div>
+
+    {/* Decorative Background Text */}
+    <div class="absolute -left-10 top-1/2 -translate-y-1/2 text-[120px] font-black text-terminal-red/5 select-none pointer-events-none rotate-90 whitespace-nowrap">
+      JOIN_THE_CLUSTER
+    </div>
+
+    <div class="relative z-10">
+      <div class="inline-block mb-6">
+        {props.badgeText && (
+          <div class="flex items-center justify-center gap-2 mb-2">
+            <span class="w-2 h-2 bg-terminal-red status-blink"></span>
+            <span class="text-[10px] font-bold tracking-[0.3em] text-terminal-red">{props.badgeText}</span>
+            <span class="w-2 h-2 bg-terminal-red status-blink"></span>
+          </div>
+        )}
+        <h2 class="text-4xl md:text-6xl font-black mb-2 tracking-tighter group-hover:skew-x-2 transition-transform duration-75">
+          {props.headline}
+        </h2>
+        <div class="h-1 bg-terminal-red w-full scale-x-0 group-hover:scale-x-100 transition-transform origin-center duration-500"></div>
+      </div>
+
+      {props.description && (
+        <p class="mb-12 opacity-80 max-w-lg mx-auto text-xs sm:text-sm font-mono leading-relaxed lowercase italic">
+          {props.description}
+        </p>
+      )}
+
+      <div class="flex flex-col items-center gap-4">
+        <button 
+          id="join-cta-button"
+          class="relative group/btn bg-terminal-red text-white px-12 py-5 font-black text-xl hover:bg-white hover:text-terminal-red transition-all shadow-[8px_8px_0px_#330000] hover:shadow-[0px_0px_20px_#FF0000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+        >
+          <span class="relative z-10 flex items-center gap-3">
+            <span class="status-blink">⊘</span>
+            {props.buttonText || 'GENERATE_KEY_AND_JOIN'}
+          </span>
+          <div class="absolute inset-0 bg-white scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left duration-300"></div>
+        </button>
+        
+        <div class="flex gap-8 mt-4 text-[9px] font-bold text-terminal-gray">
+          {props.termsLinkText && (
+            <span class="flex items-center gap-1 hover:text-terminal-red cursor-help">
+              <span class="text-terminal-red">[!]</span> {props.termsLinkText}
+            </span>
+          )}
+          {props.helpLinkText && (
+            <span class="flex items-center gap-1 hover:text-terminal-red cursor-help">
+              <span class="text-terminal-red">[?]</span> {props.helpLinkText}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Side Data Bars */}
+    <div class="absolute left-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1">
+      {[...Array(12)].map((_, i) => (
+        <div class={`h-1 w-2 bg-terminal-red/30 ${i % 3 === 0 ? 'status-blink' : ''}`}></div>
+      ))}
+    </div>
+    <div class="absolute right-4 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1">
+      {[...Array(12)].map((_, i) => (
+        <div class={`h-1 w-2 bg-terminal-red/30 ${i % 2 === 0 ? 'status-blink' : ''}`}></div>
+      ))}
+    </div>
+
+    <style>{`
+      @keyframes scan {
+        from { top: 0%; }
+        to { top: 100%; }
+      }
+    `}</style>
+  </section>
+)}
+
+<script>
+  const joinButton = document.getElementById('join-cta-button');
+  if (joinButton) {
+    joinButton.addEventListener('click', () => {
+      // TODO: Implement actual join functionality or link to join URL
+      alert("AUTHENTICATION_FAILED: ACCESS_TOKEN_REQUIRED_FROM_GOVERNANCE");
+    });
+  }
+</script>
+

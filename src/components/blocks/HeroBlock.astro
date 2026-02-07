@@ -1,0 +1,256 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import HeroCountdown from './HeroCountdown';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+---
+
+<section class="mt-8 grid-layout border border-terminal-gray bg-terminal-black relative overflow-hidden group/hero">
+  {/* Background FX */}
+  <div class="absolute inset-0 pointer-events-none opacity-[0.03] z-0">
+    <div class="w-full h-full bg-[repeating-linear-gradient(0deg,rgba(255,0,0,0.1),rgba(255,0,0,0.1)_1px,transparent_1px,transparent_2px)]"></div>
+  </div>
+
+  {/* 1. PRIMARY IDENTITY BLOCK */}
+  <div class="col-span-12 lg:col-span-8 p-8 md:p-12 cell-border relative z-10 flex flex-col justify-center">
+    {(props.heroStatusBadge || props.heroConnectionNode) && (
+      <div class="flex items-center gap-3 mb-6">
+        {props.heroStatusBadge && (
+          <span class="bg-terminal-red text-white px-2 py-0.5 text-[10px] font-black status-blink">{props.heroStatusBadge}</span>
+        )}
+        {props.heroConnectionNode && (
+          <span class="text-terminal-gray text-[10px] font-bold tracking-[0.3em]">{props.heroConnectionNode}</span>
+        )}
+      </div>
+    )}
+    
+    {(props.heroTitle || props.heroTitleHighlight) && (
+      <h1 class="text-5xl md:text-8xl font-black leading-[0.85] mb-6 tracking-tighter uppercase italic group-hover/hero:skew-x-1 transition-transform duration-700">
+        {props.heroTitle}<br/>
+        {props.heroTitleHighlight && <span class="text-terminal-red">{props.heroTitleHighlight}</span>}
+      </h1>
+    )}
+    
+    {props.heroDescription && (
+      <p class="max-w-2xl text-sm md:text-lg mb-10 lowercase tracking-normal font-normal opacity-70 leading-relaxed border-l-2 border-terminal-red pl-6">
+        {props.heroDescription}
+      </p>
+    )}
+
+    {(props.initiateHandshakeText || props.systemLogsText) && (
+      <div class="flex flex-wrap gap-4">
+        {props.initiateHandshakeText && (
+          <button 
+            id="initiate-handshake-btn"
+            class="bg-terminal-white text-terminal-black px-8 py-4 font-black text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[6px_6px_0px_#333] active:translate-x-1 active:translate-y-1 active:shadow-none"
+          >
+            {props.initiateHandshakeText}
+          </button>
+        )}
+        {props.systemLogsText && (
+          <button 
+            id="system-logs-btn"
+            class="border-2 border-terminal-red text-terminal-red px-8 py-4 font-black text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[6px_6px_0px_#220000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+          >
+            {props.systemLogsText}
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+
+  {/* 2. RESOURCE UPLINK SIDEBAR */}
+  <div class="col-span-12 lg:col-span-4 flex flex-col cell-border bg-terminal-gray/5 divide-y divide-terminal-gray">
+    
+    {/* Intel Feed Port */}
+    {(props.intelFeedTitle || props.intelFeedDescription || props.intelFeedTimestamp) && (
+      <div class="p-6 hover:bg-terminal-white/5 transition-colors cursor-pointer group/intel">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-terminal-red font-black text-[9px] tracking-widest uppercase flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-terminal-red rounded-full status-blink"></span>
+            INTEL_FEED
+          </span>
+          {props.intelFeedTimestamp && (
+            <span class="text-[8px] text-terminal-gray">{props.intelFeedTimestamp}</span>
+          )}
+        </div>
+        {props.intelFeedTitle && (
+          <h3 class="text-lg font-black leading-none mb-2 group-hover/intel:text-terminal-red transition-colors">
+            {props.intelFeedTitle}
+          </h3>
+        )}
+        {props.intelFeedDescription && (
+          <p class="text-[9px] opacity-40 lowercase italic font-mono truncate">
+            {props.intelFeedDescription}
+          </p>
+        )}
+      </div>
+    )}
+
+    {/* GitHub Uplink */}
+    {props.githubUplinkUrl && (
+      <a 
+        href={props.githubUplinkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="p-6 flex items-center gap-4 group/gh hover:bg-terminal-white/5 transition-colors"
+      >
+        <div class="w-12 h-12 border border-terminal-white flex items-center justify-center bg-terminal-white text-terminal-black font-black text-lg group-hover/gh:bg-terminal-red group-hover/gh:border-terminal-red group-hover/gh:text-white transition-all">
+          GH
+        </div>
+        <div>
+          {props.githubUplinkLabel && (
+            <span class="text-[9px] text-terminal-red font-black tracking-widest uppercase block mb-0.5">{props.githubUplinkLabel}</span>
+          )}
+          {props.githubUplinkTitle && (
+            <h3 class="font-black text-sm uppercase">{props.githubUplinkTitle}</h3>
+          )}
+        </div>
+        <span class="ml-auto text-terminal-gray group-hover/gh:text-terminal-red transition-colors">⎘</span>
+      </a>
+    )}
+
+    {/* NuGet Uplink */}
+    {props.nugetUplinkUrl && (
+      <a 
+        href={props.nugetUplinkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="p-6 flex items-center gap-4 group/ng hover:bg-terminal-white/5 transition-colors"
+      >
+        <div class="w-12 h-12 border border-terminal-white flex items-center justify-center bg-terminal-white text-terminal-black font-black text-lg group-hover/ng:bg-terminal-red group-hover/ng:border-terminal-red group-hover/ng:text-white transition-all">
+          NG
+        </div>
+        <div>
+          {props.nugetUplinkLabel && (
+            <span class="text-[9px] text-terminal-red font-black tracking-widest uppercase block mb-0.5">{props.nugetUplinkLabel}</span>
+          )}
+          {props.nugetUplinkTitle && (
+            <h3 class="font-black text-sm uppercase">{props.nugetUplinkTitle}</h3>
+          )}
+        </div>
+        <span class="ml-auto text-terminal-gray group-hover/ng:text-terminal-red transition-colors">⎘</span>
+      </a>
+    )}
+
+    {/* Small Scan Overlay Footer */}
+    {props.countdownSyncText && (
+      <div class="mt-auto p-4 bg-black/40 font-mono text-[8px] leading-tight text-terminal-gray uppercase tracking-widest relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-px bg-terminal-red/20 animate-[scan_3s_linear_infinite]"></div>
+        {props.countdownSyncText}<br/>
+        READY_FOR_OVERRIDE_
+      </div>
+    )}
+  </div>
+
+  {/* 3. CRITICAL COUNTDOWN HUB */}
+  <div class="col-span-12 p-8 md:p-12 md:pb-24 border-t border-terminal-gray bg-terminal-red/[0.02] flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Tactical Overlay ornaments */}
+      <div class="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-terminal-red/20"></div>
+      <div class="absolute bottom-6 right-6 w-12 h-12 border-b-2 border-r-2 border-terminal-red/20"></div>
+      
+      <div class="relative z-10 flex flex-col items-center">
+        <div class="mb-4 md:mb-6 flex flex-col items-center">
+          <span class="text-[10px] text-terminal-red font-black tracking-[0.8em] uppercase mb-2">
+            CRITICAL_SEQUENCE_LOCK
+          </span>
+          <div class="h-0.5 w-32 bg-gradient-to-r from-transparent via-terminal-red to-transparent"></div>
+        </div>
+
+        <HeroCountdown client:load />
+
+        <div class="mt-8 flex flex-col items-center gap-4">
+          {props.countdownTargetVersion && (
+            <div class="flex gap-4">
+              <span class="border-2 border-terminal-red text-terminal-red px-4 py-1.5 bg-terminal-red/5 font-black text-[10px] uppercase tracking-widest">
+                {props.countdownTargetVersion}
+              </span>
+            </div>
+          )}
+          {(props.countdownHash || props.countdownNode || props.countdownEncryption) && (
+            <div class="flex gap-8 text-[8px] font-mono font-bold text-terminal-gray uppercase tracking-[0.2em] opacity-40">
+              {props.countdownHash && <span>{props.countdownHash}</span>}
+              {props.countdownNode && <span>{props.countdownNode}</span>}
+              {props.countdownEncryption && <span>{props.countdownEncryption}</span>}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* SCROLL ANCHOR - Added after countdown */}
+      <button 
+        id="scroll-to-console-btn"
+        class="absolute bottom-6 md:bottom-8 flex flex-col items-center gap-2 group/scroll cursor-pointer z-20"
+      >
+        <span class="text-[8px] font-black tracking-[0.5em] text-terminal-gray group-hover/scroll:text-terminal-red transition-colors">
+          [SCROLL_TO_CONSOLE]
+        </span>
+        <div class="w-8 h-8 border border-terminal-gray flex items-center justify-center text-terminal-gray group-hover/scroll:border-terminal-red group-hover/scroll:text-terminal-red transition-all animate-bounce">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {/* Dynamic side telemetry bars */}
+      <div class="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1">
+        {Array.from({ length: 15 }, (_, i) => (
+          <div 
+            class={`h-1 w-4 ${i % 4 === 0 ? 'bg-terminal-red' : 'bg-terminal-gray/20'} animate-pulse`}
+            style={`animation-delay: ${i * 100}ms;`}
+          ></div>
+        ))}
+      </div>
+      <div class="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-1">
+        {Array.from({ length: 15 }, (_, i) => (
+          <div 
+            class={`h-1 w-4 ${i % 3 === 0 ? 'bg-terminal-red' : 'bg-terminal-gray/20'} animate-pulse`}
+            style={`animation-delay: ${i * 150}ms;`}
+          ></div>
+        ))}
+      </div>
+    </div>
+</section>
+
+<style is:global>
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(1000%); }
+  }
+</style>
+
+<script>
+  // Scroll to console functionality
+  const scrollBtn = document.getElementById('scroll-to-console-btn');
+  if (scrollBtn) {
+    scrollBtn.addEventListener('click', () => {
+      const nextSection = document.getElementById('console') || document.querySelector('[id*="thread"]') || document.querySelector('[id*="Thread"]');
+      if (nextSection) {
+        nextSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  }
+
+  // Button handlers (can be extended for modals/terminal)
+  const initiateBtn = document.getElementById('initiate-handshake-btn');
+  const systemLogsBtn = document.getElementById('system-logs-btn');
+  
+  if (initiateBtn) {
+    initiateBtn.addEventListener('click', () => {
+      // TODO: Open terminal/modal when implemented
+      console.log('Initiate handshake clicked');
+    });
+  }
+  
+  if (systemLogsBtn) {
+    systemLogsBtn.addEventListener('click', () => {
+      // TODO: Open terminal/modal when implemented
+      console.log('System logs clicked');
+    });
+  }
+</script>

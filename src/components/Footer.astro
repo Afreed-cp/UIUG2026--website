@@ -1,0 +1,67 @@
+---
+import { fetchSiteSettings } from '../lib/umbraco';
+
+// Fetch Site Settings for footer data
+let siteSettings = null;
+try {
+  siteSettings = await fetchSiteSettings();
+} catch (error) {
+  console.error('Error fetching site settings:', error);
+}
+
+const copyrightText = siteSettings?.properties?.copyrightText;
+const builtOnText = siteSettings?.properties?.builtOnText;
+const socialLinks = siteSettings?.properties?.socialLinks;
+const syslogActive = siteSettings?.properties?.syslogActive;
+const syslogHash = siteSettings?.properties?.syslogHash;
+
+// Parse Multi URL Picker for social links
+function parseSocialLinks(links: any): Array<{ name: string; url: string; target?: string }> {
+  if (!links) return [];
+  if (Array.isArray(links)) {
+    return links.map(link => ({
+      name: link.name || link.title,
+      url: link.url || link.link,
+      target: link.target,
+    })).filter(link => link.name && link.url);
+  }
+  // If it's a single object
+  const parsed = {
+    name: links.name || links.title,
+    url: links.url || links.link,
+    target: links.target,
+  };
+  return parsed.name && parsed.url ? [parsed] : [];
+}
+
+const parsedSocialLinks = parseSocialLinks(socialLinks);
+---
+
+<footer class="mt-auto border-t border-terminal-gray p-8 grid-layout">
+  <div class="col-span-12 lg:col-span-6 flex flex-col gap-2">
+    <span>{copyrightText}</span>
+    <span class="text-terminal-gray">{builtOnText}</span>
+  </div>
+  <div class="col-span-12 lg:col-span-6 flex flex-col sm:flex-row justify-end gap-4 sm:gap-12 items-start sm:items-end">
+    {parsedSocialLinks.length > 0 && (
+      <div class="flex gap-4">
+        {parsedSocialLinks.map((link) => (
+          <a 
+            class="hover:text-terminal-red transition-colors" 
+            href={link.url}
+            target={link.target}
+          >
+            {link.name}
+          </a>
+        ))}
+      </div>
+    )}
+    {(syslogActive || syslogHash) && (
+      <div class="text-left sm:text-right">
+        {syslogActive && <span class="block text-terminal-red">{syslogActive}</span>}
+        {syslogHash && <span class="text-terminal-gray break-all">{syslogHash}</span>}
+      </div>
+    )}
+  </div>
+</footer>
+

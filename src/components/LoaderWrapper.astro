@@ -1,0 +1,54 @@
+---
+import Loader from './Loader';
+---
+
+<div id="loader-container" data-loader style="display: none;">
+  <Loader 
+    client:load
+    onComplete={() => {
+      // Hide loader by removing it from DOM
+      const loaderContainer = document.getElementById('loader-container');
+      if (loaderContainer) {
+        loaderContainer.style.opacity = '0';
+        loaderContainer.style.transition = 'opacity 0.5s ease-out';
+        setTimeout(() => {
+          loaderContainer.remove();
+          // Mark as shown in sessionStorage
+          sessionStorage.setItem('loader-shown', 'true');
+        }, 500);
+      }
+    }}
+  />
+</div>
+
+<script is:inline>
+  // Define global function for loader to call (fallback)
+  window.hideLoader = function() {
+    const loaderContainer = document.getElementById('loader-container');
+    if (loaderContainer) {
+      loaderContainer.style.opacity = '0';
+      loaderContainer.style.transition = 'opacity 0.5s ease-out';
+      setTimeout(() => {
+        loaderContainer.remove();
+        sessionStorage.setItem('loader-shown', 'true');
+      }, 500);
+    }
+  };
+
+  // Check sessionStorage immediately to prevent flicker
+  // This runs synchronously before React hydration
+  (function() {
+    if (!sessionStorage.getItem('loader-shown')) {
+      const loaderContainer = document.getElementById('loader-container');
+      if (loaderContainer) {
+        loaderContainer.style.display = 'block';
+      }
+    } else {
+      const loaderContainer = document.getElementById('loader-container');
+      if (loaderContainer) {
+        loaderContainer.remove();
+      }
+    }
+  })();
+</script>
+

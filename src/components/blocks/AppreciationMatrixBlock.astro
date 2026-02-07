@@ -1,0 +1,30 @@
+---
+import type { BlockListItem } from '../../lib/blockRenderer';
+import AppreciationMatrix from './AppreciationMatrix';
+
+interface Props {
+  block: BlockListItem;
+}
+
+const { block } = Astro.props;
+const props = block.properties;
+console.log('[AppreciationMatrixBlock] props:', props);
+---
+
+<section class="mt-4">
+  <AppreciationMatrix 
+    client:load
+    title={props.title || undefined}
+    description={props.description || undefined}
+    headline={props.headline || undefined}
+    protocolName={props.protocolName || undefined}
+    encryptionText={props.encryptionText || undefined}
+    nodeTelemetryLabel={props.nodeTelemetryLabel || undefined}
+    densityLabel={props.densityLabel || undefined}
+    totalPulsesLabel={props.totalPulsesLabel || undefined}
+    resetButtonText={props.resetButtonText || undefined}
+    gridSize={props.gridSize || undefined}
+    initialTotalAppreciation={props.initialTotalAppreciation || undefined}
+  />
+</section>
+
