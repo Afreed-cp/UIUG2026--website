@@ -203,7 +203,7 @@ const SpeakerDetailModal: React.FC<{ speaker: Speaker; onClose: () => void }> = 
 
   return (
     <div 
-      className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 md:p-12 animate-in zoom-in-95 duration-300"
+      className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-12 animate-in zoom-in-95 duration-300 overflow-y-auto"
       onClick={(e) => {
         // Close when clicking backdrop
         if (e.target === e.currentTarget) {
@@ -211,9 +211,9 @@ const SpeakerDetailModal: React.FC<{ speaker: Speaker; onClose: () => void }> = 
         }
       }}
     >
-      <div className="bg-white border-4 border-black w-full max-w-4xl relative overflow-hidden flex flex-col md:flex-row">
+      <div className="bg-white border-4 border-black w-full max-w-4xl relative overflow-hidden flex flex-col md:flex-row my-auto max-h-[95vh] md:max-h-none">
       {/* Visual Block */}
-      <div className="w-full md:w-1/2 aspect-square md:aspect-auto relative overflow-hidden border-b-4 md:border-b-0 md:border-r-4 border-black group">
+      <div className="w-full md:w-1/2 aspect-square md:aspect-auto relative overflow-hidden border-b-4 md:border-b-0 md:border-r-4 border-black group flex-shrink-0">
          {speaker.imageUrl ? (
            <img src={speaker.imageUrl} className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 transition-all duration-700" alt={speaker.name} />
          ) : (
@@ -222,66 +222,66 @@ const SpeakerDetailModal: React.FC<{ speaker: Speaker; onClose: () => void }> = 
            </div>
          )}
          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
-         <div className="absolute bottom-6 left-6 text-white z-10">
-           <span className="text-[10px] font-black tracking-[0.5em] text-terminal-red status-blink uppercase block mb-2">TARGET_SCAN_COMPLETE</span>
-           <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">{speaker.name}</h2>
+         <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 text-white z-10">
+           <span className="text-[9px] sm:text-[10px] font-black tracking-[0.3em] sm:tracking-[0.5em] text-terminal-red status-blink uppercase block mb-2">TARGET_SCAN_COMPLETE</span>
+           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter uppercase leading-none break-words">{speaker.name}</h2>
          </div>
          {/* HUD Elements */}
-         <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-terminal-red pointer-events-none"></div>
-         <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-terminal-red pointer-events-none"></div>
+         <div className="absolute top-4 sm:top-6 left-4 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-l-2 border-terminal-red pointer-events-none"></div>
+         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-r-2 border-terminal-red pointer-events-none"></div>
       </div>
 
       {/* Content Block */}
-      <div className="flex-1 p-8 md:p-12 flex flex-col justify-between bg-white relative">
+      <div className="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col justify-between bg-white relative overflow-y-auto min-h-0">
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 text-black font-black text-xs border-2 border-black px-4 py-2 hover:bg-black hover:text-white transition-all uppercase tracking-widest"
+          className="absolute top-3 sm:top-4 md:top-6 right-3 sm:right-4 md:right-6 text-black font-black text-[10px] sm:text-xs border-2 border-black px-2 sm:px-3 md:px-4 py-1 sm:py-1.5 md:py-2 hover:bg-black hover:text-white transition-all uppercase tracking-widest z-10"
         >
           [ CLOSE_X ]
         </button>
 
-        <div>
-          <div className="flex items-center gap-4 mb-8">
-            <span className="bg-black text-white px-3 py-1 text-[10px] font-black tracking-widest">REF_0x{speaker.id}</span>
-            <span className={`text-[10px] font-black tracking-widest mt-[15px] ml-[25px] ${speaker.status === 'ONLINE' ? 'text-green-600' : speaker.status === 'BUSY' ? 'text-orange-600' : 'text-terminal-red'}`}>
+        <div className="pt-8 sm:pt-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
+            <span className="bg-black text-white px-2 sm:px-3 py-1 text-[9px] sm:text-[10px] font-black tracking-widest break-all">{`REF_0x${speaker.id}`}</span>
+            <span className={`text-[9px] sm:text-[10px] font-black tracking-widest ${speaker.status === 'ONLINE' ? 'text-green-600' : speaker.status === 'BUSY' ? 'text-orange-600' : 'text-terminal-red'} sm:mt-[15px] sm:ml-[25px]`}>
               ● STATUS::{speaker.status}
             </span>
           </div>
 
-          <div className="mb-10">
-            <span className="text-[10px] font-black text-gray-400 block mb-2 uppercase tracking-[0.2em]">IDENTIFIED_ROLE</span>
-            <h3 className="text-2xl font-black uppercase italic border-l-4 border-terminal-red pl-6 leading-tight mb-4">
+          <div className="mb-6 sm:mb-10">
+            <span className="text-[9px] sm:text-[10px] font-black text-gray-400 block mb-2 uppercase tracking-[0.2em]">IDENTIFIED_ROLE</span>
+            <h3 className="text-xl sm:text-2xl font-black uppercase italic border-l-4 border-terminal-red pl-4 sm:pl-6 leading-tight mb-3 sm:mb-4 break-words">
               {speaker.role}
             </h3>
-            <div className="flex gap-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            <div className="flex flex-wrap gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                <span>NODE: {speaker.node}</span>
-               <span className="opacity-30">|</span>
+               <span className="opacity-30 hidden sm:inline">|</span>
                <span>CLEARANCE: {speaker.clearanceLevel || 'LVL_04'}</span>
             </div>
           </div>
 
-          <div className="mb-10">
-            <span className="text-[10px] font-black text-gray-400 block mb-4 uppercase tracking-[0.2em]">SYSTEM_ABSTRACT</span>
-            <p className="text-sm font-mono leading-relaxed text-gray-700 lowercase italic">
+          <div className="mb-6 sm:mb-10">
+            <span className="text-[9px] sm:text-[10px] font-black text-gray-400 block mb-3 sm:mb-4 uppercase tracking-[0.2em]">SYSTEM_ABSTRACT</span>
+            <p className="text-xs sm:text-sm font-mono leading-relaxed text-gray-700 lowercase italic break-words">
               {speaker.bio || 'no extended abstract available for this node. identifying data stream...'}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+        <div className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-8">
           <button 
             type="button"
-            className="flex-1 bg-black text-white py-2.5 px-3 font-black text-xs hover:bg-terminal-red transition-all transform active:scale-95 uppercase tracking-widest cursor-pointer border-2 border-black"
+            className="flex-1 bg-black text-white py-2 sm:py-2.5 px-3 font-black text-[10px] sm:text-xs hover:bg-terminal-red transition-all transform active:scale-95 uppercase tracking-widest cursor-pointer border-2 border-black"
           >
             [ INITIATE_PROTOCOL ]
           </button>
-          <div className="flex-1 border-2 border-black flex items-center justify-center p-2.5">
-             <span className="text-[10px] sm:text-xs font-black lowercase truncate">{speaker.handle}</span>
+          <div className="flex-1 border-2 border-black flex items-center justify-center p-2 sm:p-2.5 min-w-0">
+             <span className="text-[9px] sm:text-[10px] md:text-xs font-black lowercase truncate w-full text-center">{speaker.handle}</span>
           </div>
         </div>
 
         {/* Footer Telemetry */}
-        <div className="mt-12 pt-6 border-t border-gray-100 flex justify-between text-[8px] font-black text-gray-300 uppercase tracking-widest">
+        <div className="mt-8 sm:mt-12 pt-4 sm:pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 text-[7px] sm:text-[8px] font-black text-gray-300 uppercase tracking-widest">
            <span>ENCRYPT: RSA_4096</span>
            <span>SYNC_LATENCY: 12ms</span>
         </div>
