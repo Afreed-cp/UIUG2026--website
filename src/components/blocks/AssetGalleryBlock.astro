@@ -68,8 +68,6 @@ if (props.assets) {
         imageUrl: imageUrl || '',
       };
     }).filter(asset => asset.imageUrl); // Filter out assets without valid URLs
-    
-    console.log('[AssetGalleryBlock] Parsed assets:', assets.length);
   } catch (error) {
     console.error('[AssetGalleryBlock] Error processing assets:', error);
   }

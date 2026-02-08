@@ -22,31 +22,11 @@ interface Props {
 
 const { blockListData } = Astro.props;
 
-// Debug logging
-console.log('[BlockList] blockListData:', blockListData ? blockListData : 'Not found');
-if (blockListData) {
-  console.log('[BlockList] Structure:', {
-    hasItems: !!blockListData.items,
-    itemsLength: blockListData.items?.length || 0,
-  });
-  if (blockListData.items) {
-    console.log('[BlockList] Block types:', blockListData.items.map(item => item.content?.contentType));
-  }
-}
-
 if (!blockListData || !blockListData.items || blockListData.items.length === 0) {
   return null;
 }
 
 const blocks = getBlocksInOrder(blockListData);
-console.log('[BlockList] Parsed blocks:', blocks.length);
-blocks.forEach((block, index) => {
-  console.log(`[BlockList] Block ${index}:`, {
-    id: block.id,
-    contentType: block.contentType,
-    typeAlias: getBlockTypeAlias(block),
-  });
-});
 ---
 
 {blocks.map((block) => {
@@ -92,15 +72,3 @@ blocks.forEach((block, index) => {
       );
   }
 })}
-
-<script define:vars={{ blockListData, blocks }}>
-  // Browser console logging
-  console.log('[BlockList - Browser] blockListData:', blockListData);
-  console.log('[BlockList - Browser] blocks:', blocks);
-  if (blockListData) {
-    console.log('[BlockList - Browser] Structure:', {
-      hasItems: !!blockListData.items,
-      itemsLength: blockListData.items?.length || 0,
-    });
-  }
-</script>

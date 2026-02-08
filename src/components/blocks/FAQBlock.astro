@@ -11,7 +11,6 @@ interface Props {
 const { block } = Astro.props;
 const props = block.properties;
 
-console.log('[FAQBlock] props:', props);
 // FAQ items come from props.faqItems which is a Block List
 interface FAQItem {
   id: string;
@@ -64,8 +63,3 @@ if (props.faqItems) {
     faqs={faqs}
   />
 </section>
-
-<script define:vars={{ props, faqs }}>
-  console.log('[FAQBlock - Browser] props:', props);
-  console.log('[FAQBlock - Browser] faqs:', faqs);
-</script>

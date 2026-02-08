@@ -260,7 +260,6 @@ export async function fetchChildren(
   try {
     // First, fetch the parent item to get its route
     const parent = await fetchContentById(parentId);
-    console.log("parent",parent);
     if (!parent) {
       console.warn(`[fetchChildren] Parent with ID ${parentId} not found`);
       return [];
@@ -300,7 +299,6 @@ export async function fetchChildren(
     
     const data: UmbracoApiResponse<UmbracoContentItem> = await response.json();
     const allItems = data.items || [];
-    console.log("allItems",allItems);
     // Filter for direct children: items whose route starts with parent route and is exactly one level deeper
     const children = allItems.filter(item => {
       const itemRoute = item.route.path;
@@ -316,7 +314,6 @@ export async function fetchChildren(
              itemRouteParts.length === expectedDepth &&
              normalizedItemRoute !== normalizedParentRoute; // Exclude the parent itself
     });
-    console.log("children",children);
     return children;
   } catch (error) {
     console.error('Error fetching children from Umbraco:', error);

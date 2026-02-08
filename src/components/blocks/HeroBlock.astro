@@ -1,6 +1,7 @@
 ---
 import type { BlockListItem } from '../../lib/blockRenderer';
 import HeroCountdown from './HeroCountdown';
+import HeroIntelModal from './HeroIntelModal';
 
 interface Props {
   block: BlockListItem;
@@ -8,6 +9,62 @@ interface Props {
 
 const { block } = Astro.props;
 const props = block.properties;
+console.log("props",props);
+// Parse URL Picker - can be array (Multi URL Picker) or single object
+// Handles Umbraco URL picker structure with route.path
+function parseUrlPicker(picker: any): { name?: string; url?: string; target?: string } | null {
+  if (!picker) return null;
+  
+  // If it's an array (Multi URL Picker), take the first item
+  if (Array.isArray(picker)) {
+    if (picker.length === 0) return null;
+    const item = picker[0];
+    const name = item.name || item.title;
+    // Umbraco URL picker uses route.path for internal links
+    const url = item.url || item.link || (item.route?.path ? item.route.path : null);
+    const target = item.target;
+    return url ? { name, url, target } : null;
+  }
+  
+  // If it's a string
+  if (typeof picker === 'string') {
+    return { url: picker };
+  }
+  
+  // If it's a single object
+  const name = picker.name || picker.title;
+  // Umbraco URL picker uses route.path for internal links
+  const url = picker.url || picker.link || (picker.route?.path ? picker.route.path : null);
+  const target = picker.target;
+  return url ? { name, url, target } : null;
+}
+
+const parsedIntelUrl = parseUrlPicker(props.intelUrl);
+
+// Extract speaker name from content reference
+// Speaker can be a content reference object with id, name, properties, etc.
+function extractSpeakerName(speaker: any): string | undefined {
+  if (!speaker) return undefined;
+  
+  // If it's already a string, return it
+  if (typeof speaker === 'string') {
+    return speaker;
+  }
+  
+  // If it's an array, take the first item
+  if (Array.isArray(speaker)) {
+    if (speaker.length === 0) return undefined;
+    speaker = speaker[0];
+  }
+  
+  // Extract name from speaker object
+  // Try properties.speakerName first (if expanded), then name, then id
+  return speaker.properties?.speakerName || 
+         speaker.name || 
+         speaker.id;
+}
+
+const speakerName = extractSpeakerName(props.speaker);
 ---
 
 <section class="mt-[25px] grid-layout border border-terminal-gray bg-terminal-black relative overflow-hidden group/hero">
@@ -69,7 +126,7 @@ const props = block.properties;
     
     {/* Intel Feed Port */}
     {(props.intelFeedTitle || props.intelFeedDescription || props.intelFeedTimestamp) && (
-      <div class="p-6 hover:bg-terminal-white/5 transition-colors cursor-pointer group/intel">
+      <div id="intel-feed-trigger" class="p-6 hover:bg-terminal-white/5 transition-colors cursor-pointer group/intel">
         <div class="flex items-center justify-between mb-3">
           <span class="text-terminal-red font-black text-[9px] tracking-widest uppercase flex items-center gap-2">
             <span class="w-1.5 h-1.5 bg-terminal-red rounded-full status-blink"></span>
@@ -215,6 +272,22 @@ const props = block.properties;
         ))}
       </div>
     </div>
+
+  {/* Deep Dive Modal */}
+  <HeroIntelModal 
+    client:load 
+    intelFeedContent={typeof props.intelFeedContent === 'string' ? props.intelFeedContent : props.intelFeedContent?.markup}
+    intelUrl={parsedIntelUrl || ''}
+    modalTitle={props.intelModalTitle || props.intelFeedTitle}
+    modalSubtitle={props.intelModalSubtitle}
+    technicalReportVersion={props.intelTechnicalReportVersion}
+    author={props.intelAuthor}
+    speaker={speakerName}
+    date={props.intelDate}
+    node={props.intelNode}
+    refId={props.intelRefId}
+    classifiedLabel={props.intelClassifiedLabel}
+  />
 </section>
 
 <style is:global>

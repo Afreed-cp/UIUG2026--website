@@ -1,6 +1,6 @@
 // Service Worker for Page Caching (Next.js-like)
-const CACHE_NAME = 'uiug2026-v2'; // Bumped version to clear old redirect caches
-const RUNTIME_CACHE = 'uiug2026-runtime-v2';
+const CACHE_NAME = 'uiug2026-v3'; // Bumped version to clear old redirect caches
+const RUNTIME_CACHE = 'uiug2026-runtime-v3';
 
 // Helper function to fetch and follow redirects (Safari-compatible)
 async function fetchWithRedirects(url) {
