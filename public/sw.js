@@ -1,12 +1,14 @@
 // Service Worker for Page Caching (Next.js-like)
-const CACHE_NAME = 'uiug2026-v1';
-const RUNTIME_CACHE = 'uiug2026-runtime-v1';
+const CACHE_NAME = 'uiug2026-v2'; // Bumped version to clear old redirect caches
+const RUNTIME_CACHE = 'uiug2026-runtime-v2';
 
 // Helper function to fetch and follow redirects (Safari-compatible)
 async function fetchWithRedirects(url) {
   const response = await fetch(url, { redirect: 'follow' });
   // Only return if it's a final response (not a redirect)
-  if (response.status >= 200 && response.status < 300 && response.type === 'basic') {
+  // Check both status and redirected flag
+  if (response.status >= 200 && response.status < 300 && 
+      response.type === 'basic' && !response.redirected) {
     return response;
   }
   return response;
@@ -28,7 +30,8 @@ self.addEventListener('install', (event) => {
         try {
           const response = await fetchWithRedirects(url);
           // Only cache if it's a successful final response (not a redirect)
-          if (response.status === 200 && response.type === 'basic') {
+          // Check redirected flag to ensure it's not a redirect response
+          if (response.status === 200 && response.type === 'basic' && !response.redirected) {
             await cache.put(url, response);
           }
         } catch (error) {
@@ -67,13 +70,19 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then(async (cachedResponse) => {
-      // Return cached version if available
-      if (cachedResponse) {
+      // Check if cached response is valid (not a redirect)
+      const isValidCachedResponse = cachedResponse && 
+        cachedResponse.status === 200 && 
+        cachedResponse.type === 'basic' &&
+        !cachedResponse.redirected;
+
+      // Return cached version if available and valid
+      if (isValidCachedResponse) {
         // Update cache in background (with redirect handling)
         fetch(event.request, { redirect: 'follow' })
           .then((response) => {
             // Only cache final successful responses (not redirects)
-            if (response && response.status === 200 && response.type === 'basic') {
+            if (response && response.status === 200 && response.type === 'basic' && !response.redirected) {
               const responseToCache = response.clone();
               caches.open(RUNTIME_CACHE).then((cache) => {
                 cache.put(event.request, responseToCache);
@@ -86,13 +95,14 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
+      // If cached response is invalid (redirect) or doesn't exist, fetch from network
       // Fetch from network and cache (follow redirects)
       try {
         const response = await fetch(event.request, { redirect: 'follow' });
         
         // Only cache final successful responses (not redirects)
         // Safari doesn't allow caching redirect responses
-        if (response && response.status === 200 && response.type === 'basic') {
+        if (response && response.status === 200 && response.type === 'basic' && !response.redirected) {
           const responseToCache = response.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
             cache.put(event.request, responseToCache);
@@ -102,7 +112,8 @@ self.addEventListener('fetch', (event) => {
         return response;
       } catch (error) {
         // Network failed, return offline page if available
-        return caches.match('/');
+        const fallback = await caches.match('/');
+        return fallback || new Response('Offline', { status: 503 });
       }
     })
   );
