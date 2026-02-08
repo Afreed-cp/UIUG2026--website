@@ -1,0 +1,86 @@
+---
+import Head from '../../components/Head.astro';
+import LoaderWrapper from '../../components/LoaderWrapper.astro';
+import { fetchContentByRoute, fetchChildren } from '../../lib/umbraco';
+import { mapSpeaker } from '../../lib/umbracoMappers';
+import type { UmbracoSpeaker } from '../../types/umbraco';
+import type { Speaker } from '../../types';
+import SpeakersArchivePage from '../../components/blocks/SpeakersArchivePage';
+
+// Fetch speakers page from Umbraco
+let speakersPage = null;
+let speakers: Speaker[] = [];
+
+try {
+  // Try to fetch the speakers page by route
+  speakersPage = await fetchContentByRoute('/speakers/');
+  
+  // If not found by route, try to find it as a child of homepage
+  if (!speakersPage) {
+    const { fetchHomepage } = await import('../../lib/umbraco');
+    const homepage = await fetchHomepage();
+    if (homepage?.id) {
+      const homepageChildren = await fetchChildren(homepage.id);
+      const foundSpeakersPage = homepageChildren.find(item => 
+        item.contentType === 'speakers' || item.route.path.includes('/speakers')
+      );
+      if (foundSpeakersPage) {
+        speakersPage = foundSpeakersPage;
+      }
+    }
+  }
+  
+  // If we found the speakers page, fetch its children (speakers)
+  if (speakersPage && speakersPage.id) {
+    const speakerItems = await fetchChildren(speakersPage.id, 'speaker');
+    speakers = (speakerItems as UmbracoSpeaker[])
+      .filter(item => item.contentType === 'speaker')
+      .map(mapSpeaker);
+  }
+  
+  // Fallback: if no speakers page found, fetch all speakers directly
+  if (speakers.length === 0) {
+    const { fetchContentItems } = await import('../../lib/umbraco');
+    const allSpeakerItems = await fetchContentItems('speaker');
+    speakers = (allSpeakerItems as UmbracoSpeaker[])
+      .filter(item => item.contentType === 'speaker')
+      .map(mapSpeaker);
+  }
+} catch (error) {
+  console.error('[Speakers Page] Error fetching speakers:', error);
+}
+
+const meta = {
+  title: speakersPage?.properties?.seoTitle || speakersPage?.name || 'Speakers',
+  description: speakersPage?.properties?.seoDescription || 'Browse all Umbraco India User Group contributors and speakers.',
+  keywords: speakersPage?.properties?.metaKeywords,
+  url: '/speakers',
+  image: speakersPage?.properties?.ogImage?.url,
+};
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <Head
+      title={meta.title}
+      description={meta.description}
+      image={meta.image}
+      url={meta.url}
+      keywords={meta.keywords}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col selection:bg-terminal-red selection:text-white">
+    <LoaderWrapper />
+    <SpeakersArchivePage client:load speakers={speakers} />
+  </body>
+</html>
+
+<style is:global>
+  @import '../../styles/global.css';
+</style>
+

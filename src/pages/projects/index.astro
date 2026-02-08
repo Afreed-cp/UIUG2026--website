@@ -1,0 +1,92 @@
+---
+import Head from '../../components/Head.astro';
+import LoaderWrapper from '../../components/LoaderWrapper.astro';
+import { fetchContentByRoute, fetchChildren } from '../../lib/umbraco';
+import { mapProject } from '../../lib/umbracoMappers';
+import type { UmbracoProject } from '../../types/umbraco';
+import ProjectsArchivePage from '../../components/blocks/ProjectsArchivePage';
+
+// Fetch projects page from Umbraco
+let projectsPage = null;
+let projects: Array<{
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  imageUrl: string;
+  link: string;
+}> = [];
+
+try {
+  // Try to fetch the projects page by route
+  projectsPage = await fetchContentByRoute('/projects/');
+  
+  // If not found by route, try to find it as a child of homepage
+  if (!projectsPage) {
+    const { fetchHomepage } = await import('../../lib/umbraco');
+    const homepage = await fetchHomepage();
+    if (homepage?.id) {
+      const homepageChildren = await fetchChildren(homepage.id);
+      const foundProjectsPage = homepageChildren.find(item => 
+        item.contentType === 'projects' || item.route.path.includes('/projects')
+      );
+      if (foundProjectsPage) {
+        projectsPage = foundProjectsPage;
+      }
+    }
+  }
+  
+  // If we found the projects page, fetch its children (projects)
+  if (projectsPage && projectsPage.id) {
+    const projectItems = await fetchChildren(projectsPage.id, 'project');
+    projects = (projectItems as UmbracoProject[])
+      .filter(item => item.contentType === 'project')
+      .map(mapProject);
+  }
+  
+  // Fallback: if no projects page found, fetch all projects directly
+  if (projects.length === 0) {
+    const { fetchContentItems } = await import('../../lib/umbraco');
+    const allProjectItems = await fetchContentItems('project');
+    projects = (allProjectItems as UmbracoProject[])
+      .filter(item => item.contentType === 'project')
+      .map(mapProject);
+  }
+} catch (error) {
+  console.error('[Projects Page] Error fetching projects:', error);
+}
+
+const meta = {
+  title: projectsPage?.properties?.seoTitle || projectsPage?.name || 'Projects',
+  description: projectsPage?.properties?.seoDescription || 'Browse all Umbraco India User Group projects and showcases.',
+  keywords: projectsPage?.properties?.metaKeywords,
+  url: '/projects',
+  image: projectsPage?.properties?.ogImage?.url,
+};
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <Head
+      title={meta.title}
+      description={meta.description}
+      image={meta.image}
+      url={meta.url}
+      keywords={meta.keywords}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col selection:bg-terminal-red selection:text-white">
+    <LoaderWrapper />
+    <ProjectsArchivePage client:load projects={projects} />
+  </body>
+</html>
+
+<style is:global>
+  @import '../../styles/global.css';
+</style>
+
