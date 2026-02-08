@@ -74,6 +74,7 @@ const joinButton = parseUrlPicker(joinClusterUrl);
         class="hover:text-terminal-red transition-colors text-xs lg:text-sm whitespace-nowrap" 
         href={item.url}
         target={item.target}
+        rel={item.target === '_blank' ? 'noopener noreferrer' : 'prefetch'}
       >
         {item.name}
       </a>
@@ -242,5 +243,24 @@ const joinButton = parseUrlPicker(joinClusterUrl);
       link.addEventListener('click', closeMenu);
     });
   }
+
+  // Prefetch pages on link hover for faster navigation
+  (function() {
+    const links = document.querySelectorAll('a[href^="/"]');
+    links.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('#') && !link.hasAttribute('rel') || link.getAttribute('rel')?.includes('prefetch')) {
+        link.addEventListener('mouseenter', function prefetchPage() {
+          const linkElement = document.createElement('link');
+          linkElement.rel = 'prefetch';
+          linkElement.href = href;
+          linkElement.as = 'document';
+          document.head.appendChild(linkElement);
+          // Remove listener after prefetching once
+          link.removeEventListener('mouseenter', prefetchPage);
+        }, { once: true });
+      }
+    });
+  })();
 </script>
 

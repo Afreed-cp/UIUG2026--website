@@ -35,18 +35,25 @@ import Loader from './Loader';
     }
   };
 
-  // Check sessionStorage immediately to prevent flicker
+  // Check sessionStorage immediately to prevent flicker and avoid loading Leaflet
   // This runs synchronously before React hydration
   (function() {
-    if (!sessionStorage.getItem('loader-shown')) {
-      const loaderContainer = document.getElementById('loader-container');
-      if (loaderContainer) {
-        loaderContainer.style.display = 'block';
-      }
-    } else {
+    if (sessionStorage.getItem('loader-shown')) {
+      // Already shown - remove container immediately to prevent React hydration
       const loaderContainer = document.getElementById('loader-container');
       if (loaderContainer) {
         loaderContainer.remove();
+      }
+      // Also remove any Leaflet scripts that might have been added
+      const leafletScript = document.querySelector('script[src*="leaflet"]');
+      if (leafletScript) {
+        leafletScript.remove();
+      }
+    } else {
+      // First visit - show loader
+      const loaderContainer = document.getElementById('loader-container');
+      if (loaderContainer) {
+        loaderContainer.style.display = 'block';
       }
     }
   })();
