@@ -4,10 +4,9 @@ import type { Speaker } from '../../types';
 interface SpeakersCarouselProps {
   speakers: Speaker[];
   title?: string;
-  onViewAll?: () => void;
 }
 
-const SpeakersCarousel: React.FC<SpeakersCarouselProps> = ({ speakers, title, onViewAll }) => {
+const SpeakersCarousel: React.FC<SpeakersCarouselProps> = ({ speakers, title }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const totalItems = speakers.length;
@@ -49,12 +48,12 @@ const SpeakersCarousel: React.FC<SpeakersCarouselProps> = ({ speakers, title, on
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-end">
-          <button 
-            onClick={onViewAll}
-            className="text-[10px] border border-terminal-white px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold h-10 hidden sm:block"
+          <a 
+            href="/speakers"
+            className="text-[10px] border border-terminal-white px-3 py-2 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold h-10 hidden sm:flex items-center justify-center whitespace-nowrap"
           >
             [VIEW_ALL_CONTRIBUTORS]
-          </button>
+          </a>
           <div className="flex gap-2">
             <button 
               onClick={() => setIsAutoPlaying(!isAutoPlaying)}

@@ -1,9 +1,10 @@
 ---
 import type { BlockListItem } from '../../lib/blockRenderer';
-import {fetchContentById } from '../../lib/umbraco';
+import { fetchContentById, fetchHomepage, fetchChildren, fetchContentItems, fetchContentByRoute } from '../../lib/umbraco';
 import { mapEvent } from '../../lib/umbracoMappers';
 import type { UmbracoEvent } from '../../types/umbraco';
 import type { Event } from '../../types';
+import EventsList from './EventsList';
 
 interface Props {
   block: BlockListItem;
@@ -45,64 +46,55 @@ if (props.threads && Array.isArray(props.threads)) {
     
     events = await Promise.all(eventPromises);
   } catch (error) {
-    console.error('[ThreadsBlock] Error processing events from props:', error);
+    console.error('[EventsBlock] Error processing events from props:', error);
   }
+}
+
+// Fetch all events for the archive
+// First try to find Events page by route, then fetch its children
+// If Events page doesn't exist, fetch events directly from homepage
+let allEvents: Event[] = [];
+try {
+  // First, try to find Events page by route
+  let eventsPage = await fetchContentByRoute('/events/');
+  
+  // If not found by route, try to find it as a child of homepage
+  if (!eventsPage || eventsPage.contentType !== 'events') {
+    const homepage = await fetchHomepage();
+    if (homepage?.id) {
+      const homepageChildren = await fetchChildren(homepage.id);
+      const foundEventsPage = homepageChildren.find(item => item.contentType === 'events');
+      if (foundEventsPage) {
+        eventsPage = foundEventsPage;
+      }
+    }
+  }
+  
+  if (eventsPage && eventsPage.id) {
+    // Fetch all Event documents that are children of the Events page
+    const allEventItems = await fetchChildren(eventsPage.id, 'event');
+    allEvents = (allEventItems as UmbracoEvent[])
+      .filter(item => item.contentType === 'event')
+      .map(mapEvent);
+  }
+  
+  // If we still don't have events, fetch all events directly
+  // This handles cases where Events page doesn't exist or fetchChildren didn't work
+  if (allEvents.length === 0) {
+    const allEventItems = await fetchContentItems('event');
+    allEvents = (allEventItems as UmbracoEvent[])
+      .filter(item => item.contentType === 'event')
+      .map(mapEvent);
+  }
+} catch (error) {
+  console.error('[EventsBlock] Error fetching all events for archive:', error);
 }
 ---
 
-<section class="mt-4 grid-layout border-l border-r border-terminal-gray" id="console">
-  {/* Header Section */}
-  <div class="col-span-12 p-3 sm:p-4 bg-terminal-gray/10 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-    <h2 class="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
-      <span class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-white text-[8px] sm:text-[10px]">CMD</span>
-      <span class="break-words">{props.title}</span>
-    </h2>
-    <button 
-      id="view-all-talks-btn"
-      class="text-[9px] sm:text-[10px] border border-terminal-white px-2 sm:px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold whitespace-nowrap"
-    >
-      [VIEW_ALL_TALKS]
-    </button>
-  </div>
-  
-  {/* Events List */}
-  {events.map((event, idx) => (
-    <>
-      <div class="col-span-12 sm:col-span-1 p-2 sm:p-4 cell-border text-terminal-red font-bold flex items-center justify-center sm:justify-center text-xs sm:text-sm">
-        {String(idx + 1).padStart(3, '0')}
-      </div>
-      <div class="col-span-12 sm:col-span-8 p-3 sm:p-4 cell-border">
-        <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
-          <span class="bg-terminal-white text-terminal-black px-1 sm:px-2 py-0.5 font-bold text-[9px] sm:text-xs whitespace-nowrap">{event.category}</span>
-          <span class="text-terminal-gray text-[9px] sm:text-xs hidden sm:inline">{event.timestamp}</span>
-        </div>
-        <a class="text-base sm:text-lg md:text-xl font-bold hover:bg-terminal-white hover:text-terminal-black block transition-colors break-words" href="#">
-          {event.title}
-        </a>
-        <div class="mt-3 sm:mt-4 flex gap-4 sm:gap-6 text-[9px] sm:text-[10px]">
-          <span class="hover:text-terminal-red cursor-pointer">[REPLY]</span>
-          <span class="hover:text-terminal-red cursor-pointer">[SHARE]</span>
-          <span class="hover:text-terminal-red cursor-pointer">[FORK]</span>
-        </div>
-      </div>
-      <div class="col-span-12 sm:col-span-3 p-3 sm:p-4 cell-border text-left sm:text-right flex flex-col justify-center">
-        <span class="block truncate text-xs sm:text-sm">USER: {event.user}</span>
-        <span class={`text-xs sm:text-sm ${event.status === 'UNSTABLE' ? 'text-terminal-red' : 'text-terminal-white opacity-60'}`}>
-          {event.status}
-        </span>
-      </div>
-    </>
-  ))}
-</section>
-
-<script>
-  // View all talks button handler
-  const viewAllBtn = document.getElementById('view-all-talks-btn');
-  if (viewAllBtn) {
-    viewAllBtn.addEventListener('click', () => {
-      // TODO: Open talks archive modal/page when implemented
-      console.log('View all talks clicked');
-    });
-  }
-</script>
+<EventsList 
+  client:load
+  events={events}
+  allEvents={allEvents}
+  title={props.title}
+/>
 

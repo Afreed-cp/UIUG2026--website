@@ -120,7 +120,7 @@ export function mapSpeaker(umbracoSpeaker: UmbracoSpeaker): Speaker {
 }
 
 /**
- * Map Umbraco Project to ShowcaseItem interface
+ * Map Umbraco Project to Project interface
  */
 export function mapProject(umbracoProject: UmbracoProject) {
   // Handle image - similar to speaker mapping
@@ -147,9 +147,12 @@ export function mapProject(umbracoProject: UmbracoProject) {
   return {
     id: umbracoProject.id,
     title: umbracoProject.properties.title || umbracoProject.name,
+    author: umbracoProject.properties.author || '',
+    description: umbracoProject.properties.description || '',
+    imageUrl: fullImageUrl || '',
+    link: umbracoProject.properties.link || '#',
     client: umbracoProject.properties.client || '',
     category: umbracoProject.properties.category || '',
-    imageUrl: fullImageUrl || '',
     tech: umbracoProject.properties.techStack || [],
   };
 }

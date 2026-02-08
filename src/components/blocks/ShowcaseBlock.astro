@@ -60,12 +60,12 @@ if (props.projects) {
         <span class="status-blink text-terminal-red">● SCANNING_PORTFOLIO</span>
         <span>ENTRIES: {projects.length}</span>
       </div>
-      <button 
-        id="view-full-repository-btn"
+      <a 
+        href="/projects"
         class="text-[9px] sm:text-[10px] border border-terminal-white px-2 sm:px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold whitespace-nowrap"
       >
         [VIEW_FULL_REPOSITORY]
-      </button>
+      </a>
     </div>
   </div>
 
@@ -134,12 +134,12 @@ if (props.projects) {
 
   {/* Grid Filler / Bottom Bar */}
   <div class="p-4 border-t border-terminal-gray flex justify-center bg-terminal-gray/5">
-    <button 
-      id="explore-repository-btn"
+    <a 
+      href="/projects"
       class="text-[10px] font-bold text-terminal-gray hover:text-terminal-white transition-colors tracking-[0.4em]"
     >
       EXPLORE_FULL_REPOSITORY_INDEX_>>>
-    </button>
+    </a>
   </div>
 </section>
 
@@ -150,21 +150,3 @@ if (props.projects) {
   }
 </style>
 
-<script>
-  // View full repository button handlers
-  const viewFullBtn = document.getElementById('view-full-repository-btn');
-  const exploreBtn = document.getElementById('explore-repository-btn');
-  
-  const handleViewAll = () => {
-    // TODO: Open projects archive modal/page when implemented
-    console.log('View full repository clicked');
-  };
-  
-  if (viewFullBtn) {
-    viewFullBtn.addEventListener('click', handleViewAll);
-  }
-  
-  if (exploreBtn) {
-    exploreBtn.addEventListener('click', handleViewAll);
-  }
-</script>
