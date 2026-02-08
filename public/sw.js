@@ -2,6 +2,16 @@
 const CACHE_NAME = 'uiug2026-v1';
 const RUNTIME_CACHE = 'uiug2026-runtime-v1';
 
+// Helper function to fetch and follow redirects (Safari-compatible)
+async function fetchWithRedirects(url) {
+  const response = await fetch(url, { redirect: 'follow' });
+  // Only return if it's a final response (not a redirect)
+  if (response.status >= 200 && response.status < 300 && response.type === 'basic') {
+    return response;
+  }
+  return response;
+}
+
 // Pages to cache immediately
 const STATIC_PAGES = [
   '/',
@@ -9,11 +19,23 @@ const STATIC_PAGES = [
   '/projects',
 ];
 
-// Install event - cache static pages
+// Install event - cache static pages (with redirect handling for Safari)
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_PAGES);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Use addAll but handle redirects properly
+      const cachePromises = STATIC_PAGES.map(async (url) => {
+        try {
+          const response = await fetchWithRedirects(url);
+          // Only cache if it's a successful final response (not a redirect)
+          if (response.status === 200 && response.type === 'basic') {
+            await cache.put(url, response);
+          }
+        } catch (error) {
+          console.log(`Failed to cache ${url}:`, error);
+        }
+      });
+      await Promise.all(cachePromises);
     })
   );
   self.skipWaiting();
@@ -33,7 +55,7 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - serve from cache, fallback to network (Safari-compatible)
 self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
@@ -44,13 +66,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+    caches.match(event.request).then(async (cachedResponse) => {
       // Return cached version if available
       if (cachedResponse) {
-        // Update cache in background
-        fetch(event.request)
+        // Update cache in background (with redirect handling)
+        fetch(event.request, { redirect: 'follow' })
           .then((response) => {
-            if (response && response.status === 200) {
+            // Only cache final successful responses (not redirects)
+            if (response && response.status === 200 && response.type === 'basic') {
               const responseToCache = response.clone();
               caches.open(RUNTIME_CACHE).then((cache) => {
                 cache.put(event.request, responseToCache);
@@ -63,25 +86,24 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
-      // Fetch from network and cache
-      return fetch(event.request)
-        .then((response) => {
-          // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
+      // Fetch from network and cache (follow redirects)
+      try {
+        const response = await fetch(event.request, { redirect: 'follow' });
+        
+        // Only cache final successful responses (not redirects)
+        // Safari doesn't allow caching redirect responses
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseToCache = response.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
             cache.put(event.request, responseToCache);
           });
-
-          return response;
-        })
-        .catch(() => {
-          // Network failed, return offline page if available
-          return caches.match('/');
-        });
+        }
+        
+        return response;
+      } catch (error) {
+        // Network failed, return offline page if available
+        return caches.match('/');
+      }
     })
   );
 });
