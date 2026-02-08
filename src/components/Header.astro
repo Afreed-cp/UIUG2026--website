@@ -69,16 +69,20 @@ const joinButton = parseUrlPicker(joinClusterUrl);
   
   {/* Desktop Navigation */}
   <nav class="hidden md:flex gap-6 lg:gap-8">
-    {navItems.length > 0 && navItems.map((item) => (
-      <a 
-        class="hover:text-terminal-red transition-colors text-xs lg:text-sm whitespace-nowrap" 
-        href={item.url}
-        target={item.target}
-        rel={item.target === '_blank' ? 'noopener noreferrer' : 'prefetch'}
-      >
-        {item.name}
-      </a>
-    ))}
+    {navItems.length > 0 && navItems.map((item) => {
+      const isExternal = item.url?.startsWith('http') || item.target === '_blank';
+      return (
+        <a 
+          class="hover:text-terminal-red transition-colors text-xs lg:text-sm whitespace-nowrap" 
+          href={item.url}
+          target={item.target}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          data-astro-prefetch={!isExternal ? 'viewport' : undefined}
+        >
+          {item.name}
+        </a>
+      );
+    })}
     {joinButton && (
       <a 
         class="text-terminal-red font-bold hover:opacity-80 transition-opacity text-xs lg:text-sm whitespace-nowrap" 
@@ -244,21 +248,44 @@ const joinButton = parseUrlPicker(joinClusterUrl);
     });
   }
 
-  // Prefetch pages on link hover for faster navigation
+  // Enhanced prefetching for internal links (works with Astro View Transitions)
   (function() {
-    const links = document.querySelectorAll('a[href^="/"]');
+    const links = document.querySelectorAll('a[href^="/"]:not([data-astro-prefetch])');
     links.forEach(link => {
       const href = link.getAttribute('href');
-      if (href && !href.startsWith('#') && !link.hasAttribute('rel') || link.getAttribute('rel')?.includes('prefetch')) {
+      if (href && !href.startsWith('#') && !link.hasAttribute('target')) {
+        // Prefetch on hover (instant navigation)
         link.addEventListener('mouseenter', function prefetchPage() {
-          const linkElement = document.createElement('link');
-          linkElement.rel = 'prefetch';
-          linkElement.href = href;
-          linkElement.as = 'document';
-          document.head.appendChild(linkElement);
-          // Remove listener after prefetching once
-          link.removeEventListener('mouseenter', prefetchPage);
+          // Use Astro's prefetch if available, otherwise fallback
+          const astro = (window as any).astro;
+          if (astro?.prefetch) {
+            astro.prefetch(href);
+          } else {
+            const linkElement = document.createElement('link');
+            linkElement.rel = 'prefetch';
+            linkElement.href = href;
+            linkElement.as = 'document';
+            if (!document.querySelector(`link[href="${href}"]`)) {
+              document.head.appendChild(linkElement);
+            }
+          }
         }, { once: true });
+        
+        // Also prefetch on touchstart for mobile
+        link.addEventListener('touchstart', function prefetchPage() {
+          const astro = (window as any).astro;
+          if (astro?.prefetch) {
+            astro.prefetch(href);
+          } else {
+            const linkElement = document.createElement('link');
+            linkElement.rel = 'prefetch';
+            linkElement.href = href;
+            linkElement.as = 'document';
+            if (!document.querySelector(`link[href="${href}"]`)) {
+              document.head.appendChild(linkElement);
+            }
+          }
+        }, { once: true, passive: true });
       }
     });
   })();

@@ -43,6 +43,10 @@ const fullImage = image ? (image.startsWith('http') ? image : (siteUrl ? `${site
 <!-- Canonical URL -->
 <link rel="canonical" href={fullUrl} />
 
+<!-- Resource Hints for Performance -->
+<link rel="dns-prefetch" href="https://unpkg.com" />
+<link rel="preconnect" href="https://unpkg.com" crossorigin />
+
 <!-- Additional meta tags -->
 <meta name="generator" content="Astro" />
 <meta name="robots" content="index, follow" />

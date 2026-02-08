@@ -28,6 +28,14 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
+    <!-- Preload critical pages -->
+    {Astro.url.pathname === '/' && (
+      <>
+        <link rel="prefetch" href="/speakers" as="document" />
+        <link rel="prefetch" href="/projects" as="document" />
+      </>
+    )}
+    
     <!-- Leaflet CSS - Only load if loader might be shown (homepage) -->
     {Astro.url.pathname === '/' && (
       <>
@@ -53,6 +61,17 @@ const {
     {Astro.url.pathname === '/' && (
       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxLV1lvTlZBo=" crossorigin=""></script>
     )}
+    
+    <!-- Service Worker Registration for Caching -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registered:', reg))
+            .catch(err => console.log('SW registration failed:', err));
+        });
+      }
+    </script>
   </body>
 </html>
 
