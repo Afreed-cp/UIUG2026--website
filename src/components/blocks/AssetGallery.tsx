@@ -84,15 +84,15 @@ const AssetGallery: React.FC<AssetGalleryProps> = ({
   return (
     <section className="mt-4 bg-terminal-black text-white border border-terminal-gray overflow-hidden w-full relative" id="gallery">
       {/* Tactical Header */}
-      <div className="p-4 bg-terminal-gray/10 flex items-center justify-between border-b border-terminal-gray relative">
-        <div className="flex items-center gap-3 relative z-10">
-          <span className="w-5 h-5 flex items-center justify-center border border-terminal-white text-terminal-white text-[10px] bg-terminal-red/10 font-black">IMG</span>
-          <h2 className="text-xl font-bold tracking-tight uppercase">
+      <div className="p-3 sm:p-4 bg-terminal-gray/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-terminal-gray relative">
+        <div className="flex items-center gap-2 sm:gap-3 relative z-10">
+          <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-white text-terminal-white text-[8px] sm:text-[10px] bg-terminal-red/10 font-black">IMG</span>
+          <h2 className="text-base sm:text-lg md:text-xl font-bold tracking-tight uppercase break-words">
             {title}
           </h2>
         </div>
         
-        <div className="flex items-center gap-4 relative z-10">
+        <div className="flex items-center gap-2 sm:gap-4 relative z-10 w-full sm:w-auto justify-between sm:justify-end">
           <div className="hidden md:flex gap-6 text-[9px] font-bold text-terminal-gray tracking-widest uppercase">
              <span className="status-blink text-terminal-red">● RECON_ACTIVE</span>
              <span>ARRAY_INDEX: {totalCols}x2</span>

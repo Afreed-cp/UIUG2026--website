@@ -17,37 +17,37 @@ const props = block.properties;
   </div>
 
   {/* 1. PRIMARY IDENTITY BLOCK */}
-  <div class="col-span-12 lg:col-span-8 p-8 md:p-12 cell-border relative z-10 flex flex-col justify-center">
+  <div class="col-span-12 lg:col-span-8 p-4 sm:p-6 md:p-8 lg:p-12 cell-border relative z-10 flex flex-col justify-center min-h-0">
     {(props.heroStatusBadge || props.heroConnectionNode) && (
-      <div class="flex items-center gap-3 mb-6">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
         {props.heroStatusBadge && (
-          <span class="bg-terminal-red text-white px-2 py-0.5 text-[10px] font-black status-blink">{props.heroStatusBadge}</span>
+          <span class="bg-terminal-red text-white px-2 py-0.5 text-[9px] sm:text-[10px] font-black status-blink whitespace-nowrap">{props.heroStatusBadge}</span>
         )}
         {props.heroConnectionNode && (
-          <span class="text-terminal-gray text-[10px] font-bold tracking-[0.3em]">{props.heroConnectionNode}</span>
+          <span class="text-terminal-gray text-[9px] sm:text-[10px] font-bold tracking-[0.2em] sm:tracking-[0.3em] break-words">{props.heroConnectionNode}</span>
         )}
       </div>
     )}
     
     {(props.heroTitle || props.heroTitleHighlight) && (
-      <h1 class="text-5xl md:text-8xl font-black leading-[0.85] mb-6 tracking-tighter uppercase italic group-hover/hero:skew-x-1 transition-transform duration-700">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-black leading-[0.85] mb-4 sm:mb-6 tracking-tighter uppercase italic group-hover/hero:skew-x-1 transition-transform duration-700 break-words">
         {props.heroTitle}<br/>
         {props.heroTitleHighlight && <span class="text-terminal-red">{props.heroTitleHighlight}</span>}
       </h1>
     )}
     
     {props.heroDescription && (
-      <p class="max-w-2xl text-sm md:text-lg mb-10 lowercase tracking-normal font-normal opacity-70 leading-relaxed border-l-2 border-terminal-red pl-6">
+      <p class="max-w-2xl text-xs sm:text-sm md:text-base lg:text-lg mb-6 sm:mb-8 md:mb-10 lowercase tracking-normal font-normal opacity-70 leading-relaxed border-l-2 border-terminal-red pl-3 sm:pl-4 md:pl-6 pr-2">
         {props.heroDescription}
       </p>
     )}
 
     {(props.initiateHandshakeText || props.systemLogsText) && (
-      <div class="flex flex-wrap gap-4">
+      <div class="flex flex-wrap gap-3 sm:gap-4">
         {props.initiateHandshakeText && (
           <button 
             id="initiate-handshake-btn"
-            class="bg-terminal-white text-terminal-black px-8 py-4 font-black text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[6px_6px_0px_#333] active:translate-x-1 active:translate-y-1 active:shadow-none"
+            class="bg-terminal-white text-terminal-black px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 font-black text-xs sm:text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[4px_4px_0px_#333] sm:shadow-[6px_6px_0px_#333] active:translate-x-1 active:translate-y-1 active:shadow-none whitespace-nowrap"
           >
             {props.initiateHandshakeText}
           </button>
@@ -55,7 +55,7 @@ const props = block.properties;
         {props.systemLogsText && (
           <button 
             id="system-logs-btn"
-            class="border-2 border-terminal-red text-terminal-red px-8 py-4 font-black text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[6px_6px_0px_#220000] active:translate-x-1 active:translate-y-1 active:shadow-none"
+            class="border-2 border-terminal-red text-terminal-red px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 font-black text-xs sm:text-sm hover:bg-terminal-red hover:text-white transition-all shadow-[4px_4px_0px_#220000] sm:shadow-[6px_6px_0px_#220000] active:translate-x-1 active:translate-y-1 active:shadow-none whitespace-nowrap"
           >
             {props.systemLogsText}
           </button>
@@ -149,34 +149,34 @@ const props = block.properties;
   </div>
 
   {/* 3. CRITICAL COUNTDOWN HUB */}
-  <div class="col-span-12 p-8 md:p-12 md:pb-24 border-t border-terminal-gray bg-terminal-red/[0.02] flex flex-col items-center justify-center relative overflow-hidden">
+  <div class="col-span-12 p-4 sm:p-6 md:p-8 lg:p-12 pb-12 sm:pb-16 md:pb-20 lg:pb-24 border-t border-terminal-gray bg-terminal-red/[0.02] flex flex-col items-center justify-center relative overflow-hidden">
       {/* Tactical Overlay ornaments */}
-      <div class="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-terminal-red/20"></div>
-      <div class="absolute bottom-6 right-6 w-12 h-12 border-b-2 border-r-2 border-terminal-red/20"></div>
+      <div class="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-l-2 border-terminal-red/20"></div>
+      <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 w-8 h-8 sm:w-12 sm:h-12 border-b-2 border-r-2 border-terminal-red/20"></div>
       
       <div class="relative z-10 flex flex-col items-center">
-        <div class="mb-4 md:mb-6 flex flex-col items-center">
-          <span class="text-[10px] text-terminal-red font-black tracking-[0.8em] uppercase mb-2">
+        <div class="mb-3 sm:mb-4 md:mb-6 flex flex-col items-center">
+          <span class="text-[8px] sm:text-[9px] md:text-[10px] text-terminal-red font-black tracking-[0.5em] sm:tracking-[0.6em] md:tracking-[0.8em] uppercase mb-2 text-center px-2">
             CRITICAL_SEQUENCE_LOCK
           </span>
-          <div class="h-0.5 w-32 bg-gradient-to-r from-transparent via-terminal-red to-transparent"></div>
+          <div class="h-0.5 w-24 sm:w-32 bg-gradient-to-r from-transparent via-terminal-red to-transparent"></div>
         </div>
 
         <HeroCountdown client:load />
 
-        <div class="mt-8 flex flex-col items-center gap-4">
+        <div class="mt-6 sm:mt-8 flex flex-col items-center gap-3 sm:gap-4 px-2">
           {props.countdownTargetVersion && (
-            <div class="flex gap-4">
-              <span class="border-2 border-terminal-red text-terminal-red px-4 py-1.5 bg-terminal-red/5 font-black text-[10px] uppercase tracking-widest">
+            <div class="flex gap-2 sm:gap-4">
+              <span class="border-2 border-terminal-red text-terminal-red px-3 sm:px-4 py-1 sm:py-1.5 bg-terminal-red/5 font-black text-[9px] sm:text-[10px] uppercase tracking-widest break-words text-center">
                 {props.countdownTargetVersion}
               </span>
             </div>
           )}
           {(props.countdownHash || props.countdownNode || props.countdownEncryption) && (
-            <div class="flex gap-8 text-[8px] font-mono font-bold text-terminal-gray uppercase tracking-[0.2em] opacity-40">
-              {props.countdownHash && <span>{props.countdownHash}</span>}
-              {props.countdownNode && <span>{props.countdownNode}</span>}
-              {props.countdownEncryption && <span>{props.countdownEncryption}</span>}
+            <div class="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-[7px] sm:text-[8px] font-mono font-bold text-terminal-gray uppercase tracking-[0.1em] sm:tracking-[0.2em] opacity-40 px-2">
+              {props.countdownHash && <span class="break-all">{props.countdownHash}</span>}
+              {props.countdownNode && <span class="break-all">{props.countdownNode}</span>}
+              {props.countdownEncryption && <span class="break-all">{props.countdownEncryption}</span>}
             </div>
           )}
         </div>
@@ -185,13 +185,13 @@ const props = block.properties;
       {/* SCROLL ANCHOR - Added after countdown */}
       <button 
         id="scroll-to-console-btn"
-        class="absolute bottom-6 md:bottom-8 flex flex-col items-center gap-2 group/scroll cursor-pointer z-20"
+        class="absolute bottom-4 sm:bottom-6 md:bottom-8 flex flex-col items-center gap-2 group/scroll cursor-pointer z-20"
       >
-        <span class="text-[8px] font-black tracking-[0.5em] text-terminal-gray group-hover/scroll:text-terminal-red transition-colors">
+        <span class="text-[7px] sm:text-[8px] font-black tracking-[0.3em] sm:tracking-[0.5em] text-terminal-gray group-hover/scroll:text-terminal-red transition-colors text-center">
           [SCROLL_TO_CONSOLE]
         </span>
-        <div class="w-8 h-8 border border-terminal-gray flex items-center justify-center text-terminal-gray group-hover/scroll:border-terminal-red group-hover/scroll:text-terminal-red transition-all animate-bounce">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="w-6 h-6 sm:w-8 sm:h-8 border border-terminal-gray flex items-center justify-center text-terminal-gray group-hover/scroll:border-terminal-red group-hover/scroll:text-terminal-red transition-all animate-bounce">
+          <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
           </svg>
         </div>

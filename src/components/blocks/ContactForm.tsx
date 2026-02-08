@@ -139,23 +139,23 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
   return (
     <>
-      <div className="p-4 bg-terminal-gray/20 cell-border flex items-center justify-between border-b border-terminal-gray">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <span className="w-5 h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[10px]">COM</span>
-          {title}
+      <div className="p-3 sm:p-4 bg-terminal-gray/20 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-terminal-gray">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+          <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[8px] sm:text-[10px]">COM</span>
+          <span className="break-words">{title}</span>
         </h2>
-        <div className="flex items-center gap-4 text-[9px] font-bold">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[8px] sm:text-[9px] font-bold">
           <span className="text-terminal-red status-blink">● SIGNAL_STRENGTH: OPTIMAL</span>
-          <span className="text-terminal-gray">BACKBONE: ACTIVE</span>
+          <span className="text-terminal-gray hidden sm:inline">BACKBONE: ACTIVE</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <div className="flex flex-col border-r border-terminal-gray">
-          <div className="p-8 relative">
-            <div className="mb-8">
-              <span className="text-[10px] text-terminal-red font-bold block mb-1">/INPUT_STREAM</span>
-              <h3 className="text-3xl font-black italic tracking-tighter uppercase">{subtitle}</h3>
+          <div className="p-4 sm:p-6 md:p-8 relative">
+            <div className="mb-6 sm:mb-8">
+              <span className="text-[9px] sm:text-[10px] text-terminal-red font-bold block mb-1">/INPUT_STREAM</span>
+              <h3 className="text-2xl sm:text-3xl font-black italic tracking-tighter uppercase break-words">{subtitle}</h3>
             </div>
 
             {status === 'SUCCESS' ? (
@@ -205,14 +205,14 @@ const ContactForm: React.FC<ContactFormProps> = ({
 
                 <button 
                   disabled={status === 'TRANSMITTING'}
-                  className="w-full bg-terminal-red text-white py-4 font-black text-lg hover:bg-terminal-white hover:text-terminal-black transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
+                  className="w-full bg-terminal-red text-white py-3 sm:py-4 font-black text-sm sm:text-base md:text-lg hover:bg-terminal-white hover:text-terminal-black transition-all flex items-center justify-center gap-2 sm:gap-4 group disabled:opacity-50 whitespace-nowrap"
                 >
                   {status === 'TRANSMITTING' ? (
-                    <span className="status-blink">{transmittingText}</span>
+                    <span className="status-blink text-xs sm:text-sm md:text-base">{transmittingText}</span>
                   ) : (
                     <>
-                      {broadcastButtonText}
-                      <span className="group-hover:translate-x-2 transition-transform">{'>>>'}</span>
+                      <span className="text-xs sm:text-sm md:text-base">{broadcastButtonText}</span>
+                      <span className="group-hover:translate-x-2 transition-transform text-xs sm:text-sm md:text-base">{'>>>'}</span>
                     </>
                   )}
                 </button>
@@ -226,7 +226,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
           </div>
 
           {/* Live Transmission Log */}
-          <div className="mt-auto border-t border-terminal-gray p-6 bg-terminal-gray/5 font-mono">
+          <div className="mt-auto border-t border-terminal-gray p-4 sm:p-6 bg-terminal-gray/5 font-mono">
             <div className="flex justify-between items-center mb-4">
               <span className="text-[9px] font-bold text-terminal-red tracking-[0.2em] uppercase flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-terminal-red rounded-full status-blink"></span>
@@ -264,14 +264,14 @@ const ContactForm: React.FC<ContactFormProps> = ({
           </div>
         </div>
 
-        <div className="p-8 bg-terminal-gray/5 flex flex-col justify-between">
+        <div className="p-4 sm:p-6 md:p-8 bg-terminal-gray/5 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-6 sm:mb-8">
               <div>
-                <span className="text-[10px] text-terminal-red font-bold block mb-1">/GEOSPATIAL_METADATA</span>
-                <h3 className="text-xl font-black tracking-tight uppercase">{mapTitle}</h3>
+                <span className="text-[9px] sm:text-[10px] text-terminal-red font-bold block mb-1">/GEOSPATIAL_METADATA</span>
+                <h3 className="text-lg sm:text-xl font-black tracking-tight uppercase break-words">{mapTitle}</h3>
               </div>
-              <div className="text-right font-mono text-[9px] opacity-40">
+              <div className="text-left sm:text-right font-mono text-[8px] sm:text-[9px] opacity-40">
                 LAT: {mapLatitude.toFixed(4)}° N<br/>
                 LON: {mapLongitude.toFixed(4)}° E
               </div>

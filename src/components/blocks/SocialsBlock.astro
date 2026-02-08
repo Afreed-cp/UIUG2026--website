@@ -61,25 +61,25 @@ if (props.socialLinks) {
 {props.title && socialPorts.length > 0 && (
   <section class="mt-4 border-l border-r border-black bg-white text-black overflow-hidden" id="socials">
     {/* Header Bar - Dark Theme for high contrast label */}
-    <div class="p-4 bg-black text-white cell-border flex items-center justify-between border-b border-black">
-      <h2 class="text-xl font-bold flex items-center gap-2">
-        <span class="w-5 h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[10px]">EXT</span>
-        {props.title || 'CLUSTER_EXTENSION_HUBS_V.2'}
+    <div class="p-3 sm:p-4 bg-black text-white cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-black">
+      <h2 class="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+        <span class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[8px] sm:text-[10px]">EXT</span>
+        <span class="break-words">{props.title || 'CLUSTER_EXTENSION_HUBS_V.2'}</span>
       </h2>
-      <div class="flex items-center gap-4 text-[9px] font-bold text-gray-400">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-[8px] sm:text-[9px] font-bold text-gray-400">
         <span class="status-blink text-terminal-red">● MULTI_CHANNEL_UPLINK</span>
         <span class="hidden sm:inline">OS: TERMINAL_COMMS_v4</span>
       </div>
     </div>
 
     {/* Grid Content */}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-b border-black">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-b border-black">
       {socialPorts.map((port) => (
         <a 
           href={port.link}
           target="_blank"
           rel="noopener noreferrer"
-          class="group relative flex flex-col p-8 border-r border-black last:border-r-0 transition-all duration-150 hover:bg-black/[0.03] cursor-pointer overflow-hidden"
+          class="group relative flex flex-col p-4 sm:p-6 md:p-8 border-r border-black last:border-r-0 transition-all duration-150 hover:bg-black/[0.03] cursor-pointer overflow-hidden"
         >
           {/* Background Grain Texture */}
           <div class="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/pinstripe.png')]"></div>
@@ -151,13 +151,13 @@ if (props.socialLinks) {
     </div>
 
     {/* Footer Meta Strip */}
-    <div class="p-3 bg-gray-50 flex justify-between items-center text-[8px] font-bold text-gray-400 tracking-[0.4em] border-t border-black">
-      <div class="flex gap-4 items-center">
+    <div class="p-2 sm:p-3 bg-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 text-[7px] sm:text-[8px] font-bold text-gray-400 tracking-[0.3em] sm:tracking-[0.4em] border-t border-black">
+      <div class="flex flex-wrap gap-2 sm:gap-4 items-center">
         <span class="text-terminal-red">NETWORK_GRID: ESTABLISHED</span>
-        <span class="opacity-30">|</span>
+        <span class="opacity-30 hidden sm:inline">|</span>
         <span>GLOBAL_PEERING: ON</span>
       </div>
-      <div class="flex gap-2">
+      <div class="flex gap-1 sm:gap-2">
         {[...Array(20)].map((_, i) => (
           <div class={`w-0.5 h-1.5 bg-black/10 ${i % 5 === 0 ? 'bg-terminal-red/40' : ''}`}></div>
         ))}

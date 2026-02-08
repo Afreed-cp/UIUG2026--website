@@ -37,17 +37,17 @@ function parseSocialLinks(links: any): Array<{ name: string; url: string; target
 const parsedSocialLinks = parseSocialLinks(socialLinks);
 ---
 
-<footer class="mt-auto border-t border-terminal-gray p-8 grid-layout">
-  <div class="col-span-12 lg:col-span-6 flex flex-col gap-2">
-    <span>{copyrightText}</span>
-    <span class="text-terminal-gray">{builtOnText}</span>
+<footer class="mt-auto border-t border-terminal-gray p-4 sm:p-6 md:p-8 grid-layout">
+  <div class="col-span-12 lg:col-span-6 flex flex-col gap-2 text-xs sm:text-sm">
+    <span class="break-words">{copyrightText}</span>
+    <span class="text-terminal-gray break-words">{builtOnText}</span>
   </div>
-  <div class="col-span-12 lg:col-span-6 flex flex-col sm:flex-row justify-end gap-4 sm:gap-12 items-start sm:items-end">
+  <div class="col-span-12 lg:col-span-6 flex flex-col sm:flex-row justify-start sm:justify-end gap-4 sm:gap-8 lg:gap-12 items-start sm:items-end mt-4 sm:mt-0">
     {parsedSocialLinks.length > 0 && (
-      <div class="flex gap-4">
+      <div class="flex flex-wrap gap-3 sm:gap-4">
         {parsedSocialLinks.map((link) => (
           <a 
-            class="hover:text-terminal-red transition-colors" 
+            class="hover:text-terminal-red transition-colors text-xs sm:text-sm whitespace-nowrap" 
             href={link.url}
             target={link.target}
           >
@@ -58,8 +58,8 @@ const parsedSocialLinks = parseSocialLinks(socialLinks);
     )}
     {(syslogActive || syslogHash) && (
       <div class="text-left sm:text-right">
-        {syslogActive && <span class="block text-terminal-red">{syslogActive}</span>}
-        {syslogHash && <span class="text-terminal-gray break-all">{syslogHash}</span>}
+        {syslogActive && <span class="block text-terminal-red text-xs sm:text-sm break-words">{syslogActive}</span>}
+        {syslogHash && <span class="text-terminal-gray break-all text-[10px] sm:text-xs">{syslogHash}</span>}
       </div>
     )}
   </div>

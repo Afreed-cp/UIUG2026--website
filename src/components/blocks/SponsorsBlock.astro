@@ -89,17 +89,17 @@ if (props.sponsors) {
 {props.title && sponsors.length > 0 && (
   <section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black overflow-hidden" id="sponsors">
     {/* Header Bar */}
-    <div class="p-4 bg-terminal-gray/10 cell-border flex items-center justify-between">
-      <h2 class="text-xl font-bold flex items-center gap-2">
-        <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">PTR</span>
-        {props.title || 'TRUSTED_PARTNERS_PROTO'}
+    <div class="p-3 sm:p-4 bg-terminal-gray/10 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+      <h2 class="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+        <span class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-white text-[8px] sm:text-[10px]">PTR</span>
+        <span class="break-words">{props.title || 'TRUSTED_PARTNERS_PROTO'}</span>
       </h2>
-      <span class="text-[10px] font-bold text-terminal-gray">U_S_P: ACTIVE_SESSION</span>
+      <span class="text-[9px] sm:text-[10px] font-bold text-terminal-gray whitespace-nowrap">U_S_P: ACTIVE_SESSION</span>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {sponsors.map((sponsor) => (
-        <div class="p-8 cell-border group hover:bg-terminal-white/5 transition-all cursor-pointer relative overflow-hidden">
+        <div class="p-4 sm:p-6 md:p-8 cell-border group hover:bg-terminal-white/5 transition-all cursor-pointer relative overflow-hidden">
           {/* Background text decoration */}
           <div class="absolute -bottom-2 -right-2 text-[40px] font-black text-terminal-gray/5 pointer-events-none select-none italic">
             {sponsor.tier}
@@ -146,11 +146,11 @@ if (props.sponsors) {
     </div>
 
     {/* Footer / CTA to Sponsor */}
-    <div class="p-6 border-t border-terminal-gray flex flex-col md:flex-row items-center justify-between gap-4 bg-terminal-gray/5">
-      <div class="flex items-center gap-4">
-        <span class="text-terminal-red text-xl status-blink">⚡</span>
+    <div class="p-4 sm:p-6 border-t border-terminal-gray flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-terminal-gray/5">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <span class="text-terminal-red text-lg sm:text-xl status-blink">⚡</span>
         {props.ctaText && (
-          <p class="text-[10px] font-bold tracking-widest text-terminal-gray">
+          <p class="text-[9px] sm:text-[10px] font-bold tracking-widest text-terminal-gray break-words">
             {props.ctaText}
           </p>
         )}
@@ -158,7 +158,7 @@ if (props.sponsors) {
       {props.ctaButtonText && (
         <button 
           id="become-sponsor-button"
-          class="btn-brutal text-[10px] px-8 py-2"
+          class="btn-brutal text-[9px] sm:text-[10px] px-4 sm:px-6 md:px-8 py-2 whitespace-nowrap w-full sm:w-auto"
         >
           {props.ctaButtonText}
         </button>

@@ -139,12 +139,12 @@ const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
   return (
     <>
       {/* Header Bar */}
-      <div className="p-4 bg-terminal-gray/20 cell-border flex items-center justify-between border-b border-terminal-gray">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <span className="w-5 h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[10px]">PLS</span>
-          {title}
+      <div className="p-3 sm:p-4 bg-terminal-gray/20 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-terminal-gray">
+        <h2 className="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+          <span className="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-red text-terminal-red text-[8px] sm:text-[10px]">PLS</span>
+          <span className="break-words">{title}</span>
         </h2>
-        <div className="flex items-center gap-4 text-[9px] font-bold text-terminal-gray uppercase">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[8px] sm:text-[9px] font-bold text-terminal-gray uppercase">
           <span className={`${gameState === 'PLAYING' ? 'status-blink text-terminal-red' : 'text-terminal-white'} tracking-widest`}>
             ● STATUS: {gameState}
           </span>
@@ -154,10 +154,10 @@ const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-12">
         {/* Left Control Panel */}
-        <div className="lg:col-span-4 p-8 border-b lg:border-b-0 lg:border-r border-terminal-gray bg-terminal-gray/5 flex flex-col justify-between">
+        <div className="lg:col-span-4 p-4 sm:p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-terminal-gray bg-terminal-gray/5 flex flex-col justify-between">
           <div>
             <span className="text-[10px] text-terminal-red font-black tracking-[0.2em] uppercase mb-2 block">/GAME_INTERFACE</span>
-            <h3 className="text-3xl font-black italic tracking-tighter uppercase mb-6 leading-none whitespace-pre-line">
+            <h3 className="text-2xl sm:text-3xl font-black italic tracking-tighter uppercase mb-4 sm:mb-6 leading-none whitespace-pre-line break-words">
               {gameTitle}
             </h3>
             {gameDescription && (
@@ -195,7 +195,7 @@ const MinesweeperGame: React.FC<MinesweeperGameProps> = ({
         </div>
 
         {/* Right Grid (The Minesweeper) */}
-        <div className="lg:col-span-8 p-4 md:p-8 bg-terminal-black overflow-x-auto">
+        <div className="lg:col-span-8 p-3 sm:p-4 md:p-6 lg:p-8 bg-terminal-black overflow-x-auto">
           <div 
             className="grid gap-1 mx-auto" 
             style={{ 

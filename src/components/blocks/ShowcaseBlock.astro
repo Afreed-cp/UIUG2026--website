@@ -50,26 +50,26 @@ if (props.projects) {
 
 <section class="mt-4 border-l border-r border-terminal-gray bg-terminal-black" id="showcase">
   {/* Header Bar */}
-  <div class="p-4 bg-terminal-gray/10 cell-border flex items-center justify-between">
-    <h2 class="text-xl font-bold flex items-center gap-2">
-      <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">SHW</span>
-      {props.title || 'PROJECT_SHOWCASE_NODE'}
+  <div class="p-3 sm:p-4 bg-terminal-gray/10 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+    <h2 class="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+      <span class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-white text-[8px] sm:text-[10px]">SHW</span>
+      <span class="break-words">{props.title || 'PROJECT_SHOWCASE_NODE'}</span>
     </h2>
-    <div class="flex items-center gap-4">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
       <div class="hidden sm:flex items-center gap-4 text-[9px] font-bold text-terminal-gray mr-4 border-r border-terminal-gray pr-4">
         <span class="status-blink text-terminal-red">● SCANNING_PORTFOLIO</span>
         <span>ENTRIES: {projects.length}</span>
       </div>
       <button 
         id="view-full-repository-btn"
-        class="text-[10px] border border-terminal-white px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold"
+        class="text-[9px] sm:text-[10px] border border-terminal-white px-2 sm:px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold whitespace-nowrap"
       >
         [VIEW_FULL_REPOSITORY]
       </button>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
     {projects.map((item) => (
       <div class="cell-border group relative overflow-hidden flex flex-col cursor-crosshair">
         {/* Image Container */}

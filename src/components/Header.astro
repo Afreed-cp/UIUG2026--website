@@ -62,14 +62,16 @@ const joinButton = parseUrlPicker(joinClusterUrl);
 
 ---
 
-<header class="fixed top-0 w-full z-50 bg-terminal-black border-b border-terminal-gray h-12 flex items-center justify-between px-4">
-  <div class="flex items-center gap-4">
-    <span class="font-bold text-sm tracking-normal">{siteName}</span>
+<header class="fixed top-0 w-full z-50 bg-terminal-black border-b border-terminal-gray h-12 flex items-center justify-between px-3 sm:px-4">
+  <div class="flex items-center gap-2 sm:gap-4">
+    <span class="font-bold text-xs sm:text-sm tracking-normal truncate">{siteName}</span>
   </div>
-  <nav class="hidden md:flex gap-8">
+  
+  {/* Desktop Navigation */}
+  <nav class="hidden md:flex gap-6 lg:gap-8">
     {navItems.length > 0 && navItems.map((item) => (
       <a 
-        class="hover:text-terminal-red transition-colors" 
+        class="hover:text-terminal-red transition-colors text-xs lg:text-sm whitespace-nowrap" 
         href={item.url}
         target={item.target}
       >
@@ -78,12 +80,167 @@ const joinButton = parseUrlPicker(joinClusterUrl);
     ))}
     {joinButton && (
       <a 
-        class="text-terminal-red font-bold hover:opacity-80 transition-opacity" 
+        class="text-terminal-red font-bold hover:opacity-80 transition-opacity text-xs lg:text-sm whitespace-nowrap" 
         href={joinButton.url}
       >
         {joinButton.name}
       </a>
     )}
   </nav>
+
+  {/* Mobile Hamburger Button */}
+  <button 
+    id="mobile-menu-toggle"
+    class="md:hidden flex items-center gap-3 p-2 group relative overflow-hidden"
+    aria-label="Toggle menu"
+  >
+    <div class="flex flex-col gap-1.5 w-8">
+      {/* Top Bar - Staggered Length */}
+      <div 
+        id="hamburger-line-1"
+        class="h-0.5 bg-terminal-white transition-all duration-300 origin-right w-10/12 group-hover:w-full"
+      ></div>
+      
+      {/* Middle Bar - Split animation */}
+      <div 
+        id="hamburger-line-2"
+        class="flex justify-between transition-all duration-300 opacity-100"
+      >
+        <div class="h-0.5 bg-terminal-red w-1/4"></div>
+        <div class="h-0.5 bg-terminal-white w-2/3 group-hover:w-1/2 transition-all"></div>
+      </div>
+      
+      {/* Bottom Bar */}
+      <div 
+        id="hamburger-line-3"
+        class="h-0.5 bg-terminal-white transition-all duration-300 origin-right w-8/12 group-hover:w-full"
+      ></div>
+    </div>
+
+    {/* Status Label */}
+    <div class="flex flex-col items-start leading-none pointer-events-none">
+      <span id="menu-label" class="text-[10px] font-black tracking-tighter">
+        [MENU]
+      </span>
+    </div>
+  </button>
+
+  {/* Mobile Menu Overlay */}
+  <div 
+    id="mobile-menu"
+    class="fixed inset-0 bg-terminal-black z-[60] transition-transform duration-300 md:hidden translate-x-full"
+  >
+    <div class="flex flex-col h-full">
+      <div class="h-12 border-b border-terminal-gray flex items-center justify-between px-4">
+        <span class="font-bold text-sm">{siteName}</span>
+        <button id="mobile-menu-close" class="p-2 text-terminal-red font-bold">[ CLOSE_X ]</button>
+      </div>
+      
+      <div class="flex-1 flex flex-col justify-center p-8 gap-8">
+        {navItems.length > 0 && navItems.map((item) => (
+          <a 
+            class="text-4xl font-black italic tracking-tighter hover:text-terminal-red transition-colors" 
+            href={item.url}
+            target={item.target}
+          >
+            {item.name}
+          </a>
+        ))}
+        {joinButton && (
+          <a 
+            class="text-4xl font-black italic tracking-tighter text-terminal-red animate-pulse" 
+            href={joinButton.url}
+          >
+            {joinButton.name}
+          </a>
+        )}
+      </div>
+
+      <div class="p-8 border-t border-terminal-gray bg-terminal-gray/5 font-mono text-[10px] text-terminal-gray">
+        <div class="flex flex-col gap-2">
+          <span>STATUS: UPLINK_STANDBY</span>
+          <span>NODE: MOBILE_ACCESS_V4</span>
+          <div class="flex gap-1 mt-2">
+            {Array.from({ length: 20 }, (_, i) => (
+              <div class={`w-1 h-3 ${i < 8 ? 'bg-terminal-red' : 'bg-terminal-gray/20'}`}></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
+
+<script>
+  const menuToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuClose = document.getElementById('mobile-menu-close');
+  const line1 = document.getElementById('hamburger-line-1');
+  const line2 = document.getElementById('hamburger-line-2');
+  const line3 = document.getElementById('hamburger-line-3');
+  const menuLabel = document.getElementById('menu-label');
+
+  const openMenu = () => {
+    if (mobileMenu) {
+      mobileMenu.classList.remove('translate-x-full');
+      mobileMenu.classList.add('translate-x-0');
+    }
+    if (line1) {
+      line1.classList.remove('w-10/12', 'group-hover:w-full');
+      line1.classList.add('w-full', '-rotate-45', '-translate-y-[1px]', 'bg-terminal-red');
+    }
+    if (line2) {
+      line2.classList.add('opacity-0', 'scale-x-0');
+    }
+    if (line3) {
+      line3.classList.remove('w-8/12', 'group-hover:w-full');
+      line3.classList.add('w-full', 'rotate-45', 'translate-y-[1px]', 'bg-terminal-red');
+    }
+    if (menuLabel) {
+      menuLabel.textContent = '[CLOSE]';
+    }
+  };
+
+  const closeMenu = () => {
+    if (mobileMenu) {
+      mobileMenu.classList.remove('translate-x-0');
+      mobileMenu.classList.add('translate-x-full');
+    }
+    if (line1) {
+      line1.classList.remove('w-full', '-rotate-45', '-translate-y-[1px]', 'bg-terminal-red');
+      line1.classList.add('w-10/12', 'group-hover:w-full', 'bg-terminal-white');
+    }
+    if (line2) {
+      line2.classList.remove('opacity-0', 'scale-x-0');
+    }
+    if (line3) {
+      line3.classList.remove('w-full', 'rotate-45', 'translate-y-[1px]', 'bg-terminal-red');
+      line3.classList.add('w-8/12', 'group-hover:w-full', 'bg-terminal-white');
+    }
+    if (menuLabel) {
+      menuLabel.textContent = '[MENU]';
+    }
+  };
+
+  if (menuToggle && mobileMenu) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('translate-x-full');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    if (menuClose) {
+      menuClose.addEventListener('click', closeMenu);
+    }
+
+    // Close menu when clicking on a link
+    const menuLinks = mobileMenu.querySelectorAll('a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+  }
+</script>
 

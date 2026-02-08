@@ -52,14 +52,14 @@ if (props.threads && Array.isArray(props.threads)) {
 
 <section class="mt-4 grid-layout border-l border-r border-terminal-gray" id="console">
   {/* Header Section */}
-  <div class="col-span-12 p-4 bg-terminal-gray/10 cell-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-    <h2 class="text-xl font-bold flex items-center gap-2">
-      <span class="w-5 h-5 flex items-center justify-center border border-terminal-white text-[10px]">CMD</span>
-      {props.title }
+  <div class="col-span-12 p-3 sm:p-4 bg-terminal-gray/10 cell-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+    <h2 class="text-base sm:text-lg md:text-xl font-bold flex items-center gap-2">
+      <span class="w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border border-terminal-white text-[8px] sm:text-[10px]">CMD</span>
+      <span class="break-words">{props.title}</span>
     </h2>
     <button 
       id="view-all-talks-btn"
-      class="text-[10px] border border-terminal-white px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold"
+      class="text-[9px] sm:text-[10px] border border-terminal-white px-2 sm:px-3 py-1 hover:bg-terminal-white hover:text-terminal-black transition-all font-bold whitespace-nowrap"
     >
       [VIEW_ALL_TALKS]
     </button>
@@ -68,26 +68,26 @@ if (props.threads && Array.isArray(props.threads)) {
   {/* Events List */}
   {events.map((event, idx) => (
     <>
-      <div class="col-span-1 lg:col-span-1 p-4 cell-border text-terminal-red font-bold flex items-center justify-center">
+      <div class="col-span-12 sm:col-span-1 p-2 sm:p-4 cell-border text-terminal-red font-bold flex items-center justify-center sm:justify-center text-xs sm:text-sm">
         {String(idx + 1).padStart(3, '0')}
       </div>
-      <div class="col-span-8 lg:col-span-8 p-4 cell-border">
-        <div class="flex items-center gap-4 mb-2">
-          <span class="bg-terminal-white text-terminal-black px-1 font-bold">{event.category}</span>
-          <span class="text-terminal-gray hidden sm:inline">{event.timestamp}</span>
+      <div class="col-span-12 sm:col-span-8 p-3 sm:p-4 cell-border">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-2">
+          <span class="bg-terminal-white text-terminal-black px-1 sm:px-2 py-0.5 font-bold text-[9px] sm:text-xs whitespace-nowrap">{event.category}</span>
+          <span class="text-terminal-gray text-[9px] sm:text-xs hidden sm:inline">{event.timestamp}</span>
         </div>
-        <a class="text-lg sm:text-xl font-bold hover:bg-terminal-white hover:text-terminal-black block transition-colors" href="#">
+        <a class="text-base sm:text-lg md:text-xl font-bold hover:bg-terminal-white hover:text-terminal-black block transition-colors break-words" href="#">
           {event.title}
         </a>
-        <div class="mt-4 flex gap-6 text-[10px]">
+        <div class="mt-3 sm:mt-4 flex gap-4 sm:gap-6 text-[9px] sm:text-[10px]">
           <span class="hover:text-terminal-red cursor-pointer">[REPLY]</span>
           <span class="hover:text-terminal-red cursor-pointer">[SHARE]</span>
           <span class="hover:text-terminal-red cursor-pointer">[FORK]</span>
         </div>
       </div>
-      <div class="col-span-3 lg:col-span-3 p-4 cell-border text-right flex flex-col justify-center">
-        <span class="block truncate">USER: {event.user}</span>
-        <span class={event.status === 'UNSTABLE' ? 'text-terminal-red' : 'text-terminal-white opacity-60'}>
+      <div class="col-span-12 sm:col-span-3 p-3 sm:p-4 cell-border text-left sm:text-right flex flex-col justify-center">
+        <span class="block truncate text-xs sm:text-sm">USER: {event.user}</span>
+        <span class={`text-xs sm:text-sm ${event.status === 'UNSTABLE' ? 'text-terminal-red' : 'text-terminal-white opacity-60'}`}>
           {event.status}
         </span>
       </div>
