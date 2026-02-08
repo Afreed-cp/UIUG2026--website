@@ -143,62 +143,61 @@ const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
         {/* Tactical HUD Static Overlays */}
         <div className="absolute inset-0 pointer-events-none z-20">
           {/* Corner Brackets */}
-          <div className="absolute top-10 left-10 border-t-2 border-l-2 border-terminal-red w-32 h-32 opacity-50"></div>
-          <div className="absolute top-10 right-10 border-t-2 border-r-2 border-terminal-red w-32 h-32 opacity-50"></div>
-          <div className="absolute bottom-10 left-10 border-b-2 border-l-2 border-terminal-red w-32 h-32 opacity-50"></div>
-          <div className="absolute bottom-10 right-10 border-b-2 border-r-2 border-terminal-red w-32 h-32 opacity-50"></div>
+          <div className="absolute top-4 left-4 sm:top-8 sm:left-8 md:top-10 md:left-10 border-t-2 border-l-2 border-terminal-red w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 opacity-50"></div>
+          <div className="absolute top-4 right-4 sm:top-8 sm:right-8 md:top-10 md:right-10 border-t-2 border-r-2 border-terminal-red w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 opacity-50"></div>
+          <div className="absolute bottom-24 left-4 sm:bottom-24 sm:left-8 md:bottom-24 md:left-10 border-b-2 border-l-2 border-terminal-red w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 opacity-50"></div>
+          <div className="absolute bottom-24 right-4 sm:bottom-24 sm:right-8 md:bottom-24 md:right-10 border-b-2 border-r-2 border-terminal-red w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 opacity-50"></div>
           
           {/* Animated Scanning Sweep */}
           <div className="w-full h-px bg-terminal-red/40 absolute top-0 shadow-[0_0_20px_red] animate-[loader-scan_6s_linear_infinite]"></div>
           
           {/* Large Crosshair Center */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] border border-terminal-red/10 rounded-full flex items-center justify-center pointer-events-none">
-             <div className="w-0.5 h-24 bg-terminal-red/40"></div>
-             <div className="w-24 h-0.5 bg-terminal-red/40 absolute"></div>
+             <div className="w-0.5 h-12 sm:h-20 md:h-24 bg-terminal-red/40"></div>
+             <div className="w-12 sm:w-20 md:w-24 h-0.5 bg-terminal-red/40 absolute"></div>
           </div>
         </div>
       </div>
 
       {/* Floating Tactical Data (HUD Style) */}
-      <div className="absolute top-16 left-16 z-30 flex flex-col gap-2 max-w-md p-6 bg-black/60 backdrop-blur-md border border-terminal-red/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center gap-4 mb-3">
-          <div className="w-5 h-5 bg-terminal-red status-blink shadow-[0_0_10px_red]"></div>
-          <h2 className="text-2xl font-black tracking-[0.5em] uppercase text-terminal-red drop-shadow-[0_0_15px_rgba(255,0,0,0.8)]">
+      <div className="absolute top-12 left-4 sm:top-16 sm:left-8 md:top-16 md:left-16 z-30 flex flex-col gap-1 md:gap-2 max-w-[calc(100%-2rem)] sm:max-w-sm md:max-w-md p-3 md:p-6 bg-black/60 backdrop-blur-md border border-terminal-red/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-2 md:gap-4 mb-1 md:mb-3">
+          <div className="w-3 h-3 md:w-5 md:h-5 bg-terminal-red status-blink shadow-[0_0:10px_red]"></div>
+          <h2 className="text-sm sm:text-lg md:text-2xl font-black tracking-[0.3em] md:tracking-[0.5em] uppercase text-terminal-red drop-shadow-[0_0_15px_rgba(255,0,0,0.8)]">
             SYSTEM_UPLINK
           </h2>
         </div>
-        <div className="space-y-2">
-          {logs.slice(-6).map((log, i) => (
-            <div key={i} className="text-[12px] text-white/90 animate-in slide-in-from-left-6 duration-500 flex items-start gap-4">
+        <div className="space-y-1 md:space-y-2 max-h-32 sm:max-h-48 md:max-h-none overflow-hidden">
+          {logs.slice(-5).map((log, i) => (
+            <div key={i} className="text-[10px] sm:text-[11px] md:text-[12px] text-white/90 animate-in slide-in-from-left-6 duration-500 flex items-start gap-2 md:gap-4">
               <span className="text-terminal-red font-black">»</span>
-              <span className="opacity-100 font-bold">{log}</span>
+              <span className="opacity-100 font-bold truncate">{log}</span>
             </div>
           ))}
-          <div className="text-[12px] text-terminal-red status-blink font-black mt-2">_LISTENING_FOR_HANDSHAKE_0x14</div>
+          <div className="text-[10px] md:text-[12px] text-terminal-red status-blink font-black mt-1">_UPLINK_STABLE_0x14</div>
         </div>
       </div>
 
       {/* Floating Target Telemetry */}
-      <div className="absolute bottom-24 right-16 z-30 text-right p-10 bg-black/60 backdrop-blur-md border border-terminal-red/30 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-        <div className="mb-6">
-          <span className="text-sm text-terminal-gray block mb-3 font-black tracking-[0.2em] uppercase">CLUSTER_GEOSPATIAL_VECTOR</span>
-          <span className="text-5xl font-black text-white italic tracking-tighter block leading-none">
-            DENMARK <span className="text-terminal-red px-4 font-normal">{'>>'}</span> INDIA
+      <div className="absolute bottom-24 right-4 sm:bottom-24 sm:right-8 md:bottom-24 md:right-16 z-30 text-right p-4 sm:p-6 md:p-10 bg-black/60 backdrop-blur-md border border-terminal-red/30 shadow-[0_0_30px_rgba(0,0,0,0.5)] max-w-[calc(100%-2rem)] sm:max-w-md md:max-w-none">
+        <div className="mb-2 md:mb-6">
+          <span className="text-[10px] md:text-sm text-terminal-gray block mb-1 md:mb-3 font-black tracking-[0.1em] md:tracking-[0.2em] uppercase">GEOSPATIAL_VECTOR</span>
+          <span className="text-2xl sm:text-4xl md:text-5xl font-black text-white italic tracking-tighter block leading-none">
+            DK <span className="text-terminal-red px-1 md:px-4 font-normal">{'>>'}</span> IN
           </span>
         </div>
-        <div className="flex flex-col gap-4 items-end">
-          <div className="flex items-center gap-8 text-xs font-black text-terminal-gray tracking-widest">
-            <span>BITRATE: 8192 KBPS</span>
-            <span>NODES: 4,512</span>
-            <span className="text-terminal-red animate-pulse">LATENCY: 0.08MS</span>
+        <div className="flex flex-col gap-2 md:gap-4 items-end">
+          <div className="flex items-center gap-3 md:gap-8 text-[8px] sm:text-[10px] md:text-xs font-black text-terminal-gray tracking-widest">
+            <span className="hidden sm:inline">NODES: 4,512</span>
+            <span className="text-terminal-red animate-pulse">LAT: 0.08MS</span>
           </div>
           {/* Main Progress Hub */}
-          <div className="w-96 space-y-4 mt-6">
-            <div className="flex justify-between items-end text-sm font-black text-white tracking-[0.4em]">
+          <div className="w-full sm:w-72 md:w-96 space-y-2 md:space-y-4 mt-2 md:mt-6">
+            <div className="flex justify-between items-end text-[10px] sm:text-[12px] md:text-sm font-black text-white tracking-[0.2em] md:tracking-[0.4em]">
               <span>SYNC_PROGRESS</span>
-              <span className="text-terminal-red text-4xl">{Math.floor(progress)}%</span>
+              <span className="text-terminal-red text-xl sm:text-3xl md:text-4xl">{Math.floor(progress)}%</span>
             </div>
-            <div className="w-full h-3 bg-terminal-gray/30 relative overflow-hidden">
+            <div className="w-full h-2 md:h-3 bg-terminal-gray/30 relative overflow-hidden">
               <div 
                 className="h-full bg-terminal-red transition-all duration-300 ease-out shadow-[0_0_25px_rgba(255,0,0,1)]"
                 style={{ width: `${progress}%` }}
@@ -208,23 +207,23 @@ const Loader: React.FC<LoaderProps> = ({ onComplete }) => {
         </div>
       </div>
 
-      {/* Static Decorative Side Elements */}
-      <div className="absolute left-10 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
+      {/* Static Decorative Side Elements - Hidden on small mobile */}
+      <div className="absolute left-4 sm:left-8 md:left-10 top-1/2 -translate-y-1/2 hidden sm:flex flex-col gap-2 md:gap-3 z-20">
          {[...Array(12)].map((_, i) => (
-           <div key={i} className={`w-1.5 h-10 transition-colors duration-500 ${i < (progress / 8) ? 'bg-terminal-red' : 'bg-terminal-gray/20'}`}></div>
+           <div key={i} className={`w-1 md:w-1.5 h-6 sm:h-8 md:h-10 transition-colors duration-500 ${i < (progress / 8) ? 'bg-terminal-red' : 'bg-terminal-gray/20'}`}></div>
          ))}
       </div>
 
       {/* Bottom Data Strip Overlay */}
-      <div className="absolute bottom-0 w-full h-20 bg-black/95 border-t border-terminal-red/50 z-40 flex items-center justify-between px-20 text-[12px] font-black text-terminal-gray tracking-[1em] uppercase">
-        <div className="flex gap-16 items-center">
-          <span className="text-terminal-red">ENCRYPTION_LAYER_RSA_4096_ACTIVE</span>
+      <div className="absolute bottom-0 w-full h-16 sm:h-18 md:h-20 bg-black/95 border-t border-terminal-red/50 z-40 flex items-center justify-between px-4 sm:px-12 md:px-20 text-[8px] sm:text-[10px] md:text-[12px] font-black text-terminal-gray tracking-[0.5em] md:tracking-[1em] uppercase">
+        <div className="flex gap-4 md:gap-16 items-center">
+          <span className="text-terminal-red truncate max-w-[150px] sm:max-w-none">RSA_4096_ACTIVE</span>
           <span className="hidden lg:inline opacity-30">|</span>
           <span className="hidden lg:inline">NODE_CLUSTER_KERALA_v1.4.2</span>
         </div>
-        <div className="flex gap-4 h-8 items-center">
-           {[...Array(30)].map((_, i) => (
-             <div key={i} className={`w-1 h-5 transition-colors duration-300 ${i < (progress / 3.3) ? 'bg-terminal-red' : 'bg-terminal-gray/20'}`}></div>
+        <div className="flex gap-1 sm:gap-2 md:gap-4 h-4 md:h-8 items-center">
+           {[...Array(15)].map((_, i) => (
+             <div key={i} className={`w-1 h-3 md:h-5 transition-colors duration-300 ${i < (progress / 6.6) ? 'bg-terminal-red' : 'bg-terminal-gray/20'}`}></div>
            ))}
         </div>
       </div>
