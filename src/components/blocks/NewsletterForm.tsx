@@ -102,7 +102,7 @@ const NewsletterForm: React.FC<NewsletterFormProps> = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={placeholderText}
-                    className="w-full bg-transparent p-4 sm:p-6 md:p-8 sm:pl-16 text-sm sm:text-base md:text-lg font-black focus:outline-none placeholder:opacity-20 uppercase tracking-widest text-terminal-white"
+                    className="w-full bg-transparent p-4 sm:p-6 md:pt-[31px] md:pb-[31px] md:px-8 sm:pl-16 text-sm sm:text-base md:text-lg font-black focus:outline-none placeholder:opacity-20 uppercase tracking-widest text-terminal-white md:ml-[50px]"
                   />
                   {/* Internal Signal Strength indicator */}
                   <div className="hidden sm:flex absolute right-4 sm:right-6 items-end gap-1 h-6">
